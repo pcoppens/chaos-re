@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class DistribuedSystem {
@@ -14,6 +16,7 @@ public class DistribuedSystem {
     private Map<Function, List<Function>> redondants= new HashMap<>();
     private List<List<Function>> services= new ArrayList<>();
     private List<Function> redondantFailure= new ArrayList<>();
+
 
     public static DistribuedSystem buildSystem(int redondant, int endpoint, int num, boolean avoidCrossing){
         DistribuedSystem distribuedSystem= new DistribuedSystem();
@@ -26,7 +29,7 @@ public class DistribuedSystem {
                 list.add(f.getRedondantServer());
             }
         }
-        distribuedSystem.buildService(4, avoidCrossing);
+        distribuedSystem.buildService(num, avoidCrossing);
         return distribuedSystem;
     }
 
@@ -79,12 +82,12 @@ public class DistribuedSystem {
         return index>=list.size()?f:list.get(index);
     }
 
-    public void run(){
-        List<Function> list=services.get(0);
-        String correlationId= "423ef456x";
-        for (Function f: list) {
-            System.out.println(loadBalancing(f).getLogLine(correlationId));
-
+    public void runSystem(){
+        for (List<Function> service:services) {
+            String correlationId=  UUID.randomUUID().toString();
+            for (Function f: service) {
+                System.out.println(loadBalancing(f).getLogLine(correlationId));
+            }
         }
     }
 
@@ -165,4 +168,21 @@ public class DistribuedSystem {
             e.printStackTrace();
         }
     }
+
+
+    public static void main(String[] args) throws InterruptedException {
+        DistribuedSystem ds= DistribuedSystem.buildSystem(2,15,2,true,0);
+        ds.toDotFile("test1.dot");
+
+        RunSystem r1= new RunSystem(ds);
+        RunSystem r2= new RunSystem(ds);
+
+        new Thread(r1).start();
+        new Thread(r2).start();
+        Thread.sleep(5000);
+        r1.isRunning=false;
+        r2.isRunning=false;
+
+    }
+
 }

@@ -22,7 +22,7 @@ class DistribuedSystemTest {
     void run() {
         DistribuedSystem ds= DistribuedSystem.buildSystem(1,10, 4,true, 2);
         System.out.println(ds);
-        ds.run();
+        ds.runSystem();
     }
 
     @Test
