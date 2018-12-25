@@ -1,29 +1,28 @@
 package be.pcoppens.generator;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class DistribuedSystem {
 
     private static Random rnd= new Random(System.currentTimeMillis());
 
-    private Set<Function> endpoints= new HashSet<>();
-    private Map<Function, List<Function>> redondants= new HashMap<>();
-    private List<List<Function>> services= new ArrayList<>();
-    private List<Function> redondantFailure= new ArrayList<>();
+    private Set<EndPoint> endpoints= new HashSet<>();
+    private Map<EndPoint, List<EndPoint>> redondants= new HashMap<>();
+    private List<List<EndPoint>> services= new ArrayList<>();
+    private List<EndPoint> redondantFailure= new ArrayList<>();
 
 
     public static DistribuedSystem buildSystem(int redondant, int endpoint, int num, boolean avoidCrossing){
         DistribuedSystem distribuedSystem= new DistribuedSystem();
         for (int i = 0; i < endpoint; i++) {
-            Function f= new Function();
+            EndPoint f= new EndPoint();
             distribuedSystem.endpoints.add(f);
-            List<Function> list= new ArrayList<>(redondant);
+            List<EndPoint> list= new ArrayList<>(redondant);
             distribuedSystem.redondants.put(f, list);
             for (int j = 0; j < redondant; j++) {
                 list.add(f.getRedondantServer());
@@ -37,7 +36,7 @@ public class DistribuedSystem {
         if(failure >endpoint)
             throw new IllegalArgumentException("failure cannot be greater than endpoint.");
         DistribuedSystem distribuedSystem= buildSystem(redondant, endpoint, num, avoidCrossing);
-        Iterator<Function> iterator= distribuedSystem.endpoints.iterator();
+        Iterator<EndPoint> iterator= distribuedSystem.endpoints.iterator();
         for (int i = 0; i < failure; i++) {
             distribuedSystem.redondantFailure.add(iterator.next());
         }
@@ -45,12 +44,12 @@ public class DistribuedSystem {
     }
 
     private void buildService(int num, boolean avoidCrossing){
-        List<Function> available= new ArrayList<>(endpoints);
+        List<EndPoint> available= new ArrayList<>(endpoints);
         for (int i = 0; i < num; i++) {
-            List<Function> service= new ArrayList<>();
+            List<EndPoint> service= new ArrayList<>();
             int max= (rnd.nextInt(endpoints.size()) %3)+2;
             for (int j = 0; j < max; j++) {
-                Function f=null;
+                EndPoint f=null;
                 while(f==null && available.size()>0){
                     f=available.get(rnd.nextInt(available.size()));
                     if(service.contains(f)) //avoid same function in a service
@@ -74,19 +73,28 @@ public class DistribuedSystem {
      * @param f
      * @return
      */
-    private Function loadBalancing(Function f){
+    private EndPoint loadBalancing(EndPoint f){
         if(redondantFailure.contains(f))
             return f;
-        List<Function> list= redondants.get(f);
+        List<EndPoint> list= redondants.get(f);
         int index= rnd.nextInt(list.size()+1) ;
         return index>=list.size()?f:list.get(index);
     }
 
     public void runSystem(){
-        for (List<Function> service:services) {
+        for (List<EndPoint> service:services) {
             String correlationId=  UUID.randomUUID().toString();
-            for (Function f: service) {
+            for (EndPoint f: service) {
                 System.out.println(loadBalancing(f).getLogLine(correlationId));
+            }
+        }
+    }
+
+    public void runSystem(OutputStream out) throws IOException {
+        for (List<EndPoint> service:services) {
+            String correlationId=  UUID.randomUUID().toString();
+            for (EndPoint f: service) {
+                out.write(loadBalancing(f).getLogLine(correlationId).getBytes());
             }
         }
     }
@@ -94,9 +102,9 @@ public class DistribuedSystem {
     @Override
     public String toString() {
         StringBuffer sb= new StringBuffer("EndPoints{\n");
-        for (Function f: endpoints) {
+        for (EndPoint f: endpoints) {
             sb.append(String.format("\t%s: %s", f.getId(), f.getURI()));
-            for(Function fr: redondants.get(f)){
+            for(EndPoint fr: redondants.get(f)){
                 sb.append(String.format("\t%s: %s", fr.getId(), fr.getURI()));
             }
             sb.append("\n");
@@ -104,9 +112,9 @@ public class DistribuedSystem {
         sb.append("}");
 
         sb.append("\nServices{\n");
-        for (List<Function> list: services) {
+        for (List<EndPoint> list: services) {
             sb.append("Sv: ");
-            for (Function f:list) {
+            for (EndPoint f:list) {
                 sb.append(String.format("--> %s   ", f.getId()));
             }
             sb.append("\n");
@@ -114,7 +122,7 @@ public class DistribuedSystem {
         sb.append("}");
 
         sb.append("\nRedondant Failures{\n");
-        for (Function f: redondantFailure) {
+        for (EndPoint f: redondantFailure) {
             sb.append(String.format("-- %s \n", f.getId()));
 
         }
@@ -125,9 +133,9 @@ public class DistribuedSystem {
     public void toDotFile(String fileName) {
         StringBuffer sb= new StringBuffer("digraph System{\n");
         // nodes
-        for (Function f: endpoints) {
+        for (EndPoint f: endpoints) {
             sb.append(String.format("\t%s ; ", f.getId()));
-            for(Function fr: redondants.get(f)){
+            for(EndPoint fr: redondants.get(f)){
                 sb.append(String.format("\t%s ; ", fr.getId()));
             }
             sb.append("\n");
@@ -135,10 +143,10 @@ public class DistribuedSystem {
         //edges
 
         int listId=1;
-        for (List<Function> list: services) {
+        for (List<EndPoint> list: services) {
             sb.append(String.format("Service_%d[shape=square];\n Service_%d->%s; ", listId, listId, list.get(0).getId()));
             if(!redondantFailure.contains(list.get(0))){
-                for (Function f:redondants.get(list.get(0))) {
+                for (EndPoint f:redondants.get(list.get(0))) {
                     sb.append(String.format("Service_%d->%s; ", listId, f.getId()));
                 }
             }
@@ -147,10 +155,10 @@ public class DistribuedSystem {
             sb.append(";\n");
             for(int i=0;i<list.size()-1;i++){ //all function exempt the last one
                 if(!redondantFailure.contains(list.get(i+1))) //if not in failure list
-                    for (Function f:redondants.get(list.get(i+1))) {
+                    for (EndPoint f:redondants.get(list.get(i+1))) {
                         sb.append(String.format("%s ->%s; ", list.get(i).getId(), f.getId())); // f -> redondant
                         if (!redondantFailure.contains(list.get(i))) {//if not in failure list
-                            for (Function f2 : redondants.get(list.get(i))) {
+                            for (EndPoint f2 : redondants.get(list.get(i))) {
                                 sb.append(String.format("%s ->%s; ", f2.getId(), f.getId()));
                                 sb.append(String.format("%s ->%s; ", f2.getId(), list.get(i+1).getId()));
                             }

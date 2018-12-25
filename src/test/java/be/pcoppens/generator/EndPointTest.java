@@ -6,37 +6,34 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
-import java.io.IOException;
-
-class FunctionTest {
+class EndPointTest {
 
     @Test
     void getRandomString(){
-        String s=Function.getRandomString();
+        String s=EndPoint.getRandomString();
         assertNotNull(s);
     }
 
     @Test
     void constructor(){
-        Function f= new Function(3);
+        EndPoint f= new EndPoint(3);
         assertNotNull(f);
         System.out.println(f);
         System.out.println(f.getURI());
         System.out.println(f.getLogLine("fe123"));
-        assertThrows(IllegalArgumentException.class, () -> new Function(0));
+        assertThrows(IllegalArgumentException.class, () -> new EndPoint(0));
 
-        Function f2= new Function();
+        EndPoint f2= new EndPoint();
         assertNotNull(f2);
     }
 
 
     @Test
     void getRedondant(){
-        Function f= new Function(3);
+        EndPoint f= new EndPoint(3);
         assertNotNull(f);
-        Function f2= f.getRedondantSameServer();
-        Function f3= f.getRedondantServer();
+        EndPoint f2= f.getRedondantSameServer();
+        EndPoint f3= f.getRedondantServer();
         assertNotNull(f2);
         assertNotNull(f3);
     }

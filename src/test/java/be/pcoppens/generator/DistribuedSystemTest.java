@@ -2,6 +2,9 @@ package be.pcoppens.generator;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DistribuedSystemTest {
@@ -19,10 +22,15 @@ class DistribuedSystemTest {
     }
 
     @Test
-    void run() {
+    void runSystem() {
         DistribuedSystem ds= DistribuedSystem.buildSystem(1,10, 4,true, 2);
-        System.out.println(ds);
         ds.runSystem();
+        ds.toDotFile("runDs.dot");
+        try {
+            ds.runSystem(new FileOutputStream("runDs.txt"));
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
     }
 
     @Test

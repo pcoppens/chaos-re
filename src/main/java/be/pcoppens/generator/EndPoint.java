@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
 
-public class Function {
+public class EndPoint {
 
     private static final String HOST = "SERVER";
     private static final String[] VERBS= {"GET", "POST","DELETE", "PUT"};
@@ -22,30 +22,30 @@ public class Function {
     private int pathLength;
     private String id= "f"+count++;
 
-    public Function(int pathLength){
+    public EndPoint(int pathLength){
         if(pathLength<1)
             throw new IllegalArgumentException("pathLength must be greater than 0");
         this.pathLength= pathLength;
         path= buildPath();
     }
 
-    public Function(){
+    public EndPoint(){
         this.pathLength= rnd.nextInt(5)+1;
         path= buildPath();
     }
 
-    private Function(String path, String verb, String host){
+    private EndPoint(String path, String verb, String host){
         this.path= path;
         this.verb= verb;
         this.host= host;
     }
 
-    public Function getRedondantServer(){
-        return new Function(path, verb, HOST+getRandomString());
+    public EndPoint getRedondantServer(){
+        return new EndPoint(path, verb, HOST+getRandomString());
     }
 
-    public Function getRedondantSameServer(){
-        return new Function(buildPath(), verb, host);
+    public EndPoint getRedondantSameServer(){
+        return new EndPoint(buildPath(), verb, host);
     }
 
     private String buildPath(){
@@ -58,7 +58,7 @@ public class Function {
     }
 
     public static String getRandomString() {
-        File file = new File(Function.class.getClassLoader().getResource("kant.txt").getFile());
+        File file = new File(EndPoint.class.getClassLoader().getResource("kant.txt").getFile());
         List<String> lines = null;
         try {
             lines = Files.readAllLines(file.toPath());
