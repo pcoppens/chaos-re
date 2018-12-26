@@ -1,24 +1,20 @@
 digraph System{
+	f18 ; 	f19 ; 
+	f0 ; 	f1 ; 
+	f4 ; 	f5 ; 
 	f22 ; 	f23 ; 
-	f24 ; 	f25 ; 
+	f10 ; 	f11 ; 
+	f14 ; 	f15 ; 
 	f20 ; 	f21 ; 
-	f28 ; 	f29 ; 
-	f30 ; 	f31 ; 
-	f36 ; 	f37 ; 
-	f38 ; 	f39 ; 
-	f32 ; 	f33 ; 
-	f26 ; 	f27 ; 
-	f34 ; 	f35 ; 
+	f8 ; 	f9 ; 
+	f12 ; 	f13 ; 
+	f2 ; 	f3 ; 
+	f6 ; 	f7 ; 
+	f16 ; 	f17 ; 
 Service_1[shape=square];
- Service_1->f24; f24 -> f28 -> f22;
-f24 ->f29; 
+ Service_1->f20; Service_1->f21; f20 -> f4 -> f12;
+f20 ->f5; f21 ->f5; f21 ->f4; f4 ->f13; f5 ->f13; f5 ->f12; 
 Service_2[shape=square];
- Service_2->f34; Service_2->f35; f34 -> f26;
-f34 ->f27; f35 ->f27; f35 ->f26; 
-Service_3[shape=square];
- Service_3->f38; Service_3->f39; f38 -> f32;
-f38 ->f33; f39 ->f33; f39 ->f32; 
-Service_4[shape=square];
- Service_4->f30; Service_4->f31; f30 -> f20 -> f36;
-f30 ->f21; f31 ->f21; f31 ->f20; f20 ->f37; f21 ->f37; f21 ->f36; 
+ Service_2->f20; Service_2->f21; f20 -> f10 -> f6;
+f20 ->f11; f21 ->f11; f21 ->f10; f10 ->f7; f11 ->f7; f11 ->f6; 
 }

@@ -1,5 +1,7 @@
 package be.pcoppens.generator;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -178,12 +180,13 @@ public class DistribuedSystem {
     }
 
 
-    public static void main(String[] args) throws InterruptedException {
-        DistribuedSystem ds= DistribuedSystem.buildSystem(2,15,2,true,0);
-        ds.toDotFile("test1.dot");
+    public static void main(String[] args) throws InterruptedException, FileNotFoundException {
+        DistribuedSystem ds= DistribuedSystem.buildSystem(1,12,2,false,0);
+        ds.toDotFile("runDs.dot");
+        FileOutputStream fout= new FileOutputStream("runDs.txt");
 
-        RunSystem r1= new RunSystem(ds);
-        RunSystem r2= new RunSystem(ds);
+        RunSystem r1= new RunSystem(ds, fout);
+        RunSystem r2= new RunSystem(ds, fout);
 
         new Thread(r1).start();
         new Thread(r2).start();
