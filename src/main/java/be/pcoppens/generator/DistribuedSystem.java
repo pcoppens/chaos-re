@@ -181,7 +181,7 @@ public class DistribuedSystem {
 
 
     public static void main(String[] args) throws InterruptedException, FileNotFoundException {
-        DistribuedSystem ds= DistribuedSystem.buildSystem(1,12,2,false,0);
+        DistribuedSystem ds= DistribuedSystem.buildSystem(1,12,3,false,1);
         ds.toDotFile("runDs.dot");
         FileOutputStream fout= new FileOutputStream("runDs.txt");
 

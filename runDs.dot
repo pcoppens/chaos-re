@@ -12,9 +12,12 @@ digraph System{
 	f6 ; 	f7 ; 
 	f16 ; 	f17 ; 
 Service_1[shape=square];
- Service_1->f20; Service_1->f21; f20 -> f4 -> f12;
-f20 ->f5; f21 ->f5; f21 ->f4; f4 ->f13; f5 ->f13; f5 ->f12; 
+ Service_1->f6; Service_1->f7; f6 -> f10 -> f22;
+f6 ->f11; f7 ->f11; f7 ->f10; f10 ->f23; f11 ->f23; f11 ->f22; 
 Service_2[shape=square];
- Service_2->f20; Service_2->f21; f20 -> f10 -> f6;
-f20 ->f11; f21 ->f11; f21 ->f10; f10 ->f7; f11 ->f7; f11 ->f6; 
+ Service_2->f6; Service_2->f7; f6 -> f20 -> f12;
+f6 ->f21; f7 ->f21; f7 ->f20; f20 ->f13; f21 ->f13; f21 ->f12; 
+Service_3[shape=square];
+ Service_3->f6; Service_3->f7; f6 -> f18 -> f8 -> f2;
+f18 ->f9; f8 ->f3; f9 ->f3; f9 ->f2; 
 }

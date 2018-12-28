@@ -1,8 +1,11 @@
 package be.pcoppens.chaos_reverse_eng;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class EndPointEntry {
+
     //properties
     private String path;
     private String verb;
@@ -14,24 +17,31 @@ public class EndPointEntry {
         this.host= host;
     }
 
+
     @Override
     public String toString() {
         return verb+" "+host + " "+ path;
     }
 
-    public String toDot() {
-        return "\""+verb+" "+host + " "+ path+"\"";
-    }
 
     public boolean isSimilar(EndPointEntry other){
         return this.verb.equalsIgnoreCase(other.verb) && this.path.equalsIgnoreCase(other.path);
     }
 
+    /**
+     * SimilarityScore is equal to 1- getLevenshteinDistance(): 1 means equals;
+     * different verb return 0
+     *
+     * @param other
+     * @return
+     */
     public float getSimilarityScore(EndPointEntry other){
-        if(!this.verb.equalsIgnoreCase(other.verb))
-            return 1;
+        if(other==null || !this.verb.equalsIgnoreCase(other.verb))
+            return 1-1;
+        if(this.isSimilar(other))
+            return 1-0;
         int score =LevenshteinTool.getLevenshteinDistance(this.path, other.path);
-        return score/Float.max(this.path.length(), other.path.length());
+        return 1-(score/Float.max(this.path.length(), other.path.length()));
     }
 
     public boolean shareSamePrefix(EndPointEntry other, int minimalPrefixLen){

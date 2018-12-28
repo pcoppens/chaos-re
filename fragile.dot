@@ -1,0 +1,4 @@
+digraph "Fragile" {
+Service_1[shape=square];
+ Service_1->"POST SERVERspecies /resolve"; "POST SERVERspecies /resolve" -> "GET SERVERmight /their/culture" -> "GET SERVERsome /their" -> "GET SERVERthan /developed/comfortable";
+}

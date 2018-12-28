@@ -33,12 +33,14 @@ class EndPointEntryTest {
         EndPointEntry otherEndPointEntry= new EndPointEntry("PUT", "host", path);
 
         //equals
-        assertEquals(0, endPointEntry.getSimilarityScore(endPointEntry));
+        assertEquals(1, endPointEntry.getSimilarityScore(endPointEntry));
         assertTrue(endPointEntry.getSimilarityScore(endPointEntry2)>0);
         assertTrue(endPointEntry.getSimilarityScore(endPointEntry2)<1);
         System.out.println("Score: "+ endPointEntry.getSimilarityScore(endPointEntry2));
         //bad verb
-        assertEquals(1, endPointEntry.getSimilarityScore(otherEndPointEntry));
+        assertEquals(0, endPointEntry.getSimilarityScore(otherEndPointEntry));
+        // compare to null
+        assertEquals(0, endPointEntry.getSimilarityScore(null));
     }
 
     @Test

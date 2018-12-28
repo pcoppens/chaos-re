@@ -4,6 +4,27 @@ package be.pcoppens.chaos_reverse_eng;
 import java.util.*;
 
 public class Service extends ArrayList<EndPointEntry> {
+    private static int count=1;
+    private String name;
+
+    public Service(int i) {
+        super(i);
+        this.name = "Sv"+count++;
+    }
+
+    public Service() {
+        this.name = "Sv"+count++;
+    }
+
+    public Service(Collection<? extends EndPointEntry> collection) {
+        super(collection);
+        this.name = "Sv"+count++;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -28,7 +49,7 @@ public class Service extends ArrayList<EndPointEntry> {
 
     @Override
     public String toString() {
-        StringBuffer sb= new StringBuffer("Service{\n");
+        StringBuffer sb= new StringBuffer(name+"{\n");
         for (EndPointEntry entry:this){
             sb.append("\t");
             sb.append(entry);
