@@ -1,0 +1,106 @@
+package be.pcoppens.vizceral;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Node {
+
+    private String renderer;
+    private String layout;
+    private String name;
+    private String displayName;
+    private List<Node> nodes = new ArrayList<>();
+    private Metadata metadata;
+    @JsonProperty("class")
+    private String _class;
+    private List<Connection> connections = new ArrayList<>();
+    private Integer updated;
+    private Double maxVolume;
+
+    public Node() {
+    }
+
+    public String getRenderer() {
+        return renderer;
+    }
+
+    public void setRenderer(String renderer) {
+        this.renderer = renderer;
+    }
+
+    public String getLayout() {
+        return layout;
+    }
+
+    public void setLayout(String layout) {
+        this.layout = layout;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
+
+    public void setNodes(List<Node> nodes) {
+        this.nodes = nodes;
+    }
+
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    public String get_class() {
+        return _class;
+    }
+
+    public void set_class(String _class) {
+        this._class = _class;
+    }
+
+    public List<Connection> getConnections() {
+        return connections;
+    }
+
+    public void setConnections(List<Connection> connections) {
+        this.connections = connections;
+    }
+
+    public Integer getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Integer updated) {
+        this.updated = updated;
+    }
+
+    public Double getMaxVolume() {
+        return maxVolume;
+    }
+
+    public void setMaxVolume(Double maxVolume) {
+        this.maxVolume = maxVolume;
+    }
+}

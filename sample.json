@@ -1,0 +1,36 @@
+{
+  "renderer": "global",
+  "name": "edge",
+  "maxVolume": 100000,
+  "entryNode": "INTERNET",
+  "nodes": [
+    {
+      "renderer": "region",
+      "layout": "ltrTree",
+      "name": "us-west-2",
+      "updated": 1462471847,
+      "maxVolume": 100000,
+      "nodes": [
+        {
+          "name": "INTERNET" 
+        },
+        {
+          "name": "apiproxy-prod",
+          "displayName": "proxy",
+          "class": "normal"
+        }
+      ],
+      "connections": [
+        {
+          "source": "INTERNET",
+          "target": "apiproxy-prod",
+          "metrics": {
+            "normal": 5000,
+            "danger": 5,
+            "warning": 0
+          }
+        }
+      ]
+    }
+  ]
+}
