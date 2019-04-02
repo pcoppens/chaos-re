@@ -23,6 +23,18 @@ public class EndPointEntry {
         this.host = host;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public String getVerb() {
+        return verb;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
     @Override
     public String toString() {
         return verb!=null?verb:""+" "+host + " "+ path;
@@ -70,7 +82,7 @@ public class EndPointEntry {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 31 * hash + verb!=null?verb.hashCode():0;
+        hash = 31 * hash + (verb!=null?verb.hashCode():0);
         hash = 31 * hash + host.hashCode();
         hash = 31 * hash + path.hashCode();
         return hash;

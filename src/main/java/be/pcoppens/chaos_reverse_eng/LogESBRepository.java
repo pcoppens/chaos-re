@@ -5,11 +5,12 @@ import be.pcoppens.vizceral.builder.DataBuilder;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static be.pcoppens.chaos_reverse_eng.ESBEntry.mapToESEntry;
-import static be.pcoppens.chaos_reverse_eng.LogESBEntry.mapToLogESBEntry;
 import static java.util.stream.Collectors.groupingBy;
 
 public class LogESBRepository {
@@ -20,24 +21,25 @@ public class LogESBRepository {
     private List<ESBEntry> esbClient= new ArrayList<>();
 
 
+
     public void read(InputStream input) throws IOException {
         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
             lines= buffer.lines().collect(Collectors.toList());
             esbClient= lines.stream().map(mapToESEntry).filter(entry->entry!=null).collect(Collectors.toList());
         }
-
     }
+
 
     public static void main(String args[])throws IOException {
         String fileName = "forem.txt";
         LogESBRepository lr= new LogESBRepository();
         lr.read(new FileInputStream(fileName));
 
-        Data global= DataBuilder.makeDataGlobal("Forem");
-        DataBuilder.addApp(global, "First App");
+        Data global= DataBuilder.makeData("Forem");
+        DataBuilder.addNode(global, lr.esbClient);
 
         JSONObject jo = new JSONObject(global);
-        System.out.println(jo);
+        Files.write(Paths.get("/home/patrice/src/vizceral-example/src/sample_data.json"), jo.toString().getBytes());
 
         System.out.println(lr);
 
@@ -50,8 +52,8 @@ public class LogESBRepository {
 
         return "LogRepository{\n" +
                 "lines.size=" + lines.size() +
+                ", esbClient:\n" + appStr+ "\n"+
                 ", esbClient.size=" + esbClient.size() +
-                ", esbClient:\n" + appStr+
                 "\n}";
     }
 }

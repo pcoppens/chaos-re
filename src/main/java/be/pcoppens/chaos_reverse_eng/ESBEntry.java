@@ -16,6 +16,18 @@ public class ESBEntry {
         this.backendEntry = backendEntry;
     }
 
+    public String getClient() {
+        return client;
+    }
+
+    public EndPointEntry getEsbEndpoint() {
+        return esbEndpoint;
+    }
+
+    public EndPointEntry getBackendEntry() {
+        return backendEntry;
+    }
+
     @Override
     public String toString() {
         return "ESBEntry{" +
@@ -30,7 +42,7 @@ public class ESBEntry {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ESBEntry esbEntry = (ESBEntry) o;
-        return client.equals(esbEntry.client) &&
+        return client.equalsIgnoreCase(esbEntry.client) &&
                 esbEndpoint.equals(esbEntry.esbEndpoint) &&
                 backendEntry.equals(esbEntry.backendEntry);
     }

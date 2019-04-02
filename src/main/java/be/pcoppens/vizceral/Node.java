@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Node {
@@ -23,6 +24,7 @@ public class Node {
 
     public Node() {
     }
+
 
     public String getRenderer() {
         return renderer;
@@ -102,5 +104,19 @@ public class Node {
 
     public void setMaxVolume(Double maxVolume) {
         this.maxVolume = maxVolume;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node node = (Node) o;
+        return name.equalsIgnoreCase(node.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }
