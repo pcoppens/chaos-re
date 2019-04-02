@@ -16,7 +16,7 @@ public class LogRepository {
     //saved lines
     private List<LogEntry> lines= new ArrayList<>();
 
-    //corr. id and list of lines
+    //correlation id and list of lines
     private Map<String, List<LogEntry>> callList ;
 
     //endpoints and number of call on it
@@ -25,7 +25,6 @@ public class LogRepository {
     // list of Sv (List of endpoints) and number of use it
     private Map<Service, Long> services= new HashMap<>() ;
 
-
     // list of similar EndPointEntry by EndPointEntry
     private Map<EndPointEntry, Set<EndPointEntry>> similarEndpoints = new HashMap();
 
@@ -33,7 +32,7 @@ public class LogRepository {
     private Map<Service, Set<Service>> similarServices= new HashMap();
 
 
-    public void read(InputStream input) throws IOException {
+    private void read(InputStream input) throws IOException {
         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
             lines= buffer.lines().map(mapToLogEntry).collect(Collectors.toList());
             callList= lines.stream().collect(groupingBy(LogEntry::getCorrelationId));
@@ -41,7 +40,7 @@ public class LogRepository {
         }
     }
 
-    public void buildServiceList(){
+    private void buildServiceList(){
         if(callList==null)throw new IllegalArgumentException("callList must be initialized. Call LogRepository.read() first.");
         for (List<LogEntry> list : callList.values()) {
             Service sv= new Service();
@@ -52,7 +51,7 @@ public class LogRepository {
         }
     }
 
-    public void bayes(){
+    private void bayes(){
         // endpoints
         /*
         P[f=f'|data]= P[data|f=f'] . P[f=f']
@@ -76,7 +75,7 @@ public class LogRepository {
                 }
             }
             if(!similarEndpoints.containsKey(e) && ! found){
-            // found no similar endpoint -> put in the list
+                // found no similar endpoint -> put in the list
                 similarEndpoints.put(e, new HashSet<>());
             }
         });
@@ -103,7 +102,7 @@ public class LogRepository {
                         for (int i = 0; i < sv.size(); i++) {
                             score= score * similarKey.get(i).getSimilarityScore(sv.get(i));
                         }
-                        // un future the fixed value will be a user parameter (dependent of the system)
+                        // in future the fixed value will be a user parameter (dependent of the system)
                         if(score > 0.9) {
                             similarServices.get(similarKey).add(sv) ;
                             found=true;
@@ -116,8 +115,6 @@ public class LogRepository {
                 similarServices.put(sv, new HashSet<>());
             }
         });
-
-
     }
 
     /**
@@ -125,7 +122,7 @@ public class LogRepository {
      * @param supportedFailure int: number of supported failures
      * @return
      */
-    public Set<Service> getFragileServices(int supportedFailure){
+    private Set<Service> getFragileServices(int supportedFailure){
         Set<Service> result= new HashSet<>();
         List<EndPointEntry> list= new ArrayList<>(similarEndpoints.keySet());
         for (Service sv: similarServices.keySet()) {
@@ -143,10 +140,10 @@ public class LogRepository {
                     if(i>0){
                         final int index=i;
                         if(
-                        services.keySet().stream()
-                                .filter(s->s.get(index).equals(sv.get(index)))
-                                .filter(s->similarEndpoints.get(list.get(getId(list, s.get(index))))
-                                        .size()>supportedFailure).toArray().length >0){ //in future length will be used
+                                services.keySet().stream()
+                                        .filter(s->s.get(index).equals(sv.get(index)))
+                                        .filter(s->similarEndpoints.get(list.get(getId(list, s.get(index))))
+                                                .size()>supportedFailure).toArray().length >0){ //in future length will be used
                             result.add(sv);
                             isFragile=true;
                         }
@@ -155,25 +152,10 @@ public class LogRepository {
             }
         }
 
-
         return result;
     }
 
-    public static void main(String args[])throws IOException {
-        String fileName = "runDs.txt";
-        LogRepository lr= new LogRepository();
-        lr.read(new FileInputStream(fileName));
-        lr.buildServiceList();
-        lr.bayes();
-        lr.servicesToDotFile("discoverSv.dot");
-        Set<Service> fragiles= lr.getFragileServices(1);
-        servicesToDotFile(fragiles, "fragile.dot", "Fragile");
-        lr.detailledServicesToDotFile(fragiles, "fragileDetails.dot", "fragile");
-      //  System.out.println(lr);
-
-    }
-
-    public static void servicesToDotFile(Set<Service> services, String fileName, String name) throws IOException {
+    private static void servicesToDotFile(Set<Service> services, String fileName, String name) throws IOException {
 
         StringBuffer sb= new StringBuffer("strict digraph \""+name +"\" {\n");
         int listId=1;
@@ -190,7 +172,7 @@ public class LogRepository {
         Files.write(Paths.get(fileName), sb.toString().getBytes());
     }
 
-    public void detailledServicesToDotFile(Set<Service> highLevelServices, String fileName, String name) throws IOException {
+    private void detailledServicesToDotFile(Set<Service> highLevelServices, String fileName, String name) throws IOException {
 
         StringBuffer sb= new StringBuffer("strict digraph \""+name +"\" {\n");
         int listId=1;
@@ -221,7 +203,7 @@ public class LogRepository {
         Files.write(Paths.get(fileName), sb.toString().getBytes());
     }
 
-    public void servicesToDotFile(String fileName) throws IOException {
+    private void servicesToDotFile(String fileName) throws IOException {
         List<EndPointEntry> list= new ArrayList<>(similarEndpoints.keySet());
 
         StringBuffer sb= new StringBuffer("digraph System{\n");
@@ -251,12 +233,33 @@ public class LogRepository {
         throw new IllegalArgumentException(String.format("Endpoint (%s) must be in the list or must be similar to at least one entry", e.toString()));
     }
 
+    /**
+     * discover the system by reading the log and produce dot files
+     * @param fileName the log file.
+     * @param discoverSvDot containt the discovered system.
+     * @param fragileDot containt all fragility points.
+     * @param fragileDetailsDot containt the detail about thes fragilities.
+     * @return
+     */
+
+    public void discoverSystem(String fileName, String discoverSvDot, String fragileDot, String fragileDetailsDot){
+         /*
+        read(new FileInputStream(fileName));
+        buildServiceList();
+        bayes();
+        servicesToDotFile(discoverSvDot);
+        Set<Service> fragiles= lr.getFragileServices(1);
+        servicesToDotFile(fragiles, fragileDot, "Fragile");
+        detailledServicesToDotFile(fragiles, fragileDetailsDot", "fragile");
+        */
+    }
+
     @Override
     public String toString() {
-      //  String linesStr= lines.stream().map( l -> l.toString() ).collect( Collectors.joining( ",\n" ) );
+        //  String linesStr= lines.stream().map( l -> l.toString() ).collect( Collectors.joining( ",\n" ) );
 
         StringBuffer sb= new StringBuffer();
-     //    callList.entrySet().stream().forEach(e-> sb.append("\t"+e.getKey()+" : "+e.getValue().size()));
+        //    callList.entrySet().stream().forEach(e-> sb.append("\t"+e.getKey()+" : "+e.getValue().size()));
         String callListStr=sb.toString();
 
         StringBuffer sb2= new StringBuffer();
@@ -272,10 +275,22 @@ public class LogRepository {
         String servicesStr= sb3.toString();
 
         return "LogRepository{\n" +
-           //     "lines=" + linesStr +
-           //     ",\n callList=" + callListStr +
+                //     "lines=" + linesStr +
+                //     ",\n callList=" + callListStr +
                 ",\n endpoints=" + endpointsStr +
                 ",\n services=" + servicesStr +
                 "\n}";
+    }
+
+
+    public static void main(String args[])throws IOException {
+        String fileName = "runDs.txt";
+        String discoverSvDot = "discoverSv.dot";
+        String fragileDot = "fragile.dot";
+        String fragileDetailsDot = "fragileDetails.dot";
+
+        LogRepository lr= new LogRepository();
+        lr.discoverSystem(fileName, discoverSvDot, fragileDot, fragileDetailsDot);
+
     }
 }

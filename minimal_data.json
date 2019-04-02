@@ -7,82 +7,25 @@
       "name": "INTERNET",
       "displayName": "INTERNET",
       "nodes": [],
-      "metadata": {},
       "class": "normal",
       "connections": []
     },
-
     {
       "renderer": "region",
-      "name": "us-west-2",
-      "displayName": "US-WEST-2",
-      "updated": 1477690452072,
-      "maxVolume": 67936.982,
+      "name": "us-east-1",
       "nodes": [],
-      "metadata": {},
-      "class": "normal",
       "connections": []
-    },
-    
-
-    {
-      "renderer": "region",
-      "name": "us-west-1",
-      "displayName": "US-WEST-1",
-      "updated": 1477690454072,
-      "maxVolume": 6793.982,
-      "metadata": {},
-      "class": "normal",
-       "nodes": [
-        {
-          "name": "Test",
-          "metadata": {
-            "streaming": 1
-          }
-        }
-       ],
-      "connections": [
-        {
-          "source": "INTERNET",
-          "target": "Test",
-          "metadata": {
-            "streaming": 1
-          },
-          "metrics": {
-            "danger": 66.98200000000001,
-            "normal": 32856.61
-          }
-        }
-       ]
-          
     }
-    
   ],
-  
   "connections": [
-    
     {
       "source": "INTERNET",
-      "target": "us-west-1",
+      "target": "us-east-1",
       "metrics": {
-        "danger": 130.712002,
-        "normal": 63139.416,
-        "warning": 0.1020001
-      },
-      "notices": [],
-      "class": "normal"
-    },
-    {
-      "source": "INTERNET",
-      "target": "us-west-2",
-      "metrics": {
-        "normal": 3164.324,
-        "danger": 97.60601,
-        "warning": 0.006
-      },
-      "notices": [],
-      "class": "normal"
+        "danger": 0.1,
+        "normal": 1000.0,
+        "warning": 0.1
+      }
     }
-  ],
-  "serverUpdateTime": 1477691777441
+  ]
 }
