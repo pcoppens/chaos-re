@@ -10,6 +10,7 @@ public class DataBuilder {
     public static final String GLOBAL= "global";
     public static final String REGION= "region";
     public static final String NORMAL= "normal";
+    public static final String WARNING= "warning";
     public static final String ESB= "ESB";
     public static final String INTERNET= "INTERNET";
 
@@ -30,16 +31,72 @@ public class DataBuilder {
                 app.getNodes().add(internet);
                 nodes.put(client, app);
             }
-            Node start= makeNode(esbEntry.getEsbEndpoint().toString());
+            Node start= makeNode(esbEntry.getEsbEndpoint());
             start.setDisplayName(getName(esbEntry.getEsbEndpoint()));
-            Node end= makeNode(esbEntry.getBackendEntry().toString());
+            Node end= makeNode(esbEntry.getBackendEntry());
             end.setDisplayName(getName(esbEntry.getBackendEntry()));
-            app.getNodes().add(start);
-            app.getNodes().add(end);
+
+            addNodeToNode(app, start);
+            addNodeToNode(app, end);
+
             app.getConnections().add(makeConnection(internet.getName(), start.getName(), 10));
             app.getConnections().add(makeConnection(start.getName(), end.getName(),10));
 
         });
+
+        setWarningApp(nodes);
+    }
+
+    private static void setWarningApp(Map<String, Node> nodes) {
+        nodes.values().stream().filter(n->hasWarning(n)).forEach(n->n.set_class(WARNING));
+    }
+
+    private static boolean hasWarning(Node node){
+        List<Notice> notices= node.getNotices();
+
+        if(notices!=null && notices.stream().anyMatch(n->n.getSeverity()==Notice.WARNING) )
+                return true;
+
+        List<Node> nodes= node.getNodes();
+        if(nodes!= null && nodes.stream().anyMatch(n->hasWarning(n)))
+            return true;
+
+        return false;
+    }
+
+
+    public static Node makeNode(EndPointEntry entry){
+        Node node= new Node();
+        node.setRenderer(REGION);
+    //    node.set_class(WARNING);
+
+        node.setName(entry.getVerb()+entry.getPath());
+        Notice notice= new Notice();
+        notice.setTitle(entry.getHost());
+
+        // local call
+        if(entry.getHost().contains("0.0.0.0"))
+            notice.setSeverity(Notice.DEFAULT);
+        else
+            notice.setSeverity(Notice.WARNING);
+
+        node.getNotices().add(notice);
+
+        return node;
+    }
+
+    private static void addNodeToNode(Node parent, Node child){
+        List<Node> nodes= parent.getNodes();
+        if(nodes.contains(child)){
+            Node node= nodes.get(nodes.indexOf(child));
+            Notice notice= node.getNotices().get(0);
+            notice.setTitle(notice.getTitle()+", "+child.getNotices().get(0).getTitle());
+            notice.setSeverity(Notice.DEFAULT);
+        }
+        else {
+            nodes.add(child);
+        }
+
     }
 
 

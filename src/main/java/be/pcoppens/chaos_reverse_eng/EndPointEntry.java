@@ -28,7 +28,7 @@ public class EndPointEntry {
     }
 
     public String getVerb() {
-        return verb;
+        return verb!=null?verb:"";
     }
 
     public String getHost() {

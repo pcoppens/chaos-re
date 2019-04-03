@@ -21,10 +21,18 @@ public class Node {
     private List<Connection> connections = new ArrayList<>();
     private Integer updated;
     private Double maxVolume;
+    private List<Notice> notices = new ArrayList<>();
 
     public Node() {
     }
 
+    public List<Notice> getNotices() {
+        return notices;
+    }
+
+    public void setNotices(List<Notice> notices) {
+        this.notices = notices;
+    }
 
     public String getRenderer() {
         return renderer;
