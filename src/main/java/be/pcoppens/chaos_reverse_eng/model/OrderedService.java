@@ -1,24 +1,28 @@
-package be.pcoppens.chaos_reverse_eng;
+package be.pcoppens.chaos_reverse_eng.model;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public class Service extends ArrayList<EndPointEntry> {
-    private static int count=1;
+/**
+ * Service define by a ordered list of enpoint. Each enpoint call the next one in this order.
+ */
+public class OrderedService extends ArrayList<EndPointEntry> {
     private String name;
 
-    public Service(int i) {
+    public OrderedService(int i, String name) {
         super(i);
-        this.name = "Sv"+count++;
+        this.name = name;
     }
 
-    public Service() {
-        this.name = "Sv"+count++;
+    public OrderedService(String name) {
+        this.name = name;
     }
 
-    public Service(Collection<? extends EndPointEntry> collection) {
+    public OrderedService(Collection<? extends EndPointEntry> collection, String name) {
         super(collection);
-        this.name = "Sv"+count++;
+        this.name = name;
     }
 
     public String getName() {

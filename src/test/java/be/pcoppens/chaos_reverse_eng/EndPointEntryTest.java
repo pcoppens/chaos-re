@@ -1,5 +1,6 @@
 package be.pcoppens.chaos_reverse_eng;
 
+import be.pcoppens.chaos_reverse_eng.model.EndPointEntry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

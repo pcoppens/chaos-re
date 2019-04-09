@@ -1,4 +1,4 @@
-package be.pcoppens.vizceral;
+package be.pcoppens.chaos_reverse_eng.output.vizceral;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

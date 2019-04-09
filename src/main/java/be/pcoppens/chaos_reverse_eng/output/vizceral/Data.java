@@ -1,4 +1,4 @@
-package be.pcoppens.vizceral;
+package be.pcoppens.chaos_reverse_eng.output.vizceral;
 
 import java.util.ArrayList;
 import java.util.List;

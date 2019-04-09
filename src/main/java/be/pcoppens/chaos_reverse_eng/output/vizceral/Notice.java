@@ -1,4 +1,4 @@
-package be.pcoppens.vizceral;
+package be.pcoppens.chaos_reverse_eng.output.vizceral;
 
 public class Notice {
     public static final int DEFAULT=0;

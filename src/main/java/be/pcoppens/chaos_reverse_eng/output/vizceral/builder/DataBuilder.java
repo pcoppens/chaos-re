@@ -1,8 +1,8 @@
-package be.pcoppens.vizceral.builder;
+package be.pcoppens.chaos_reverse_eng.output.vizceral.builder;
 
-import be.pcoppens.chaos_reverse_eng.ESBEntry;
-import be.pcoppens.chaos_reverse_eng.EndPointEntry;
-import be.pcoppens.vizceral.*;
+import be.pcoppens.chaos_reverse_eng.input.ESBEntry;
+import be.pcoppens.chaos_reverse_eng.model.EndPointEntry;
+import be.pcoppens.chaos_reverse_eng.output.vizceral.*;
 
 import java.util.*;
 

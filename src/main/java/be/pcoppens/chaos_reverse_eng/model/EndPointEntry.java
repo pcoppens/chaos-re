@@ -1,10 +1,12 @@
-package be.pcoppens.chaos_reverse_eng;
+package be.pcoppens.chaos_reverse_eng.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import be.pcoppens.chaos_reverse_eng.LevenshteinTool;
+
 import java.util.regex.Pattern;
 
+/**
+ * immutable.
+ */
 public class EndPointEntry {
 
     //properties
@@ -22,6 +24,9 @@ public class EndPointEntry {
         this.path = path;
         this.host = host;
     }
+    public EndPointEntry(String host) {
+        this.host = host;
+    }
 
     public String getPath() {
         return path;
@@ -37,14 +42,19 @@ public class EndPointEntry {
 
     @Override
     public String toString() {
-        return verb!=null?verb:""+" "+host + " "+ path;
+        return verb!=null?verb:""+" "+host!=null?host:"" + " "+ path!=null?path:"";
     }
 
 
     public boolean isSimilar(EndPointEntry other){
+        boolean result=true;
+
         if(verb==null || other.verb==null)
-            return true;
-        return this.verb.equalsIgnoreCase(other.verb) && this.path.equalsIgnoreCase(other.path);
+            result= true;
+        else
+            result= this.verb.equalsIgnoreCase(other.verb);
+
+        return result && this.path.equalsIgnoreCase(other.path);
     }
 
     /**
@@ -63,11 +73,6 @@ public class EndPointEntry {
         return 1-(score/Float.max(this.path.length(), other.path.length()));
     }
 
-    public boolean shareSamePrefix(EndPointEntry other, int minimalPrefixLen){
-        return  other.path.length()>= minimalPrefixLen &&
-                this.path.length()>= minimalPrefixLen &&
-                this.path.startsWith(other.path.substring(0, minimalPrefixLen));
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -84,7 +89,7 @@ public class EndPointEntry {
         int hash = 7;
         hash = 31 * hash + (verb!=null?verb.hashCode():0);
         hash = 31 * hash + host.hashCode();
-        hash = 31 * hash + path.hashCode();
+        hash = 31 * hash + (path!=null?path.hashCode():0);
         return hash;
     }
 

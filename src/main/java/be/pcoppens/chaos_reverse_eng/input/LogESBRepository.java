@@ -1,8 +1,8 @@
-package be.pcoppens.chaos_reverse_eng;
+package be.pcoppens.chaos_reverse_eng.input;
 
-import be.pcoppens.vizceral.Data;
-import be.pcoppens.vizceral.Node;
-import be.pcoppens.vizceral.builder.DataBuilder;
+import be.pcoppens.chaos_reverse_eng.output.vizceral.Data;
+import be.pcoppens.chaos_reverse_eng.output.vizceral.Node;
+import be.pcoppens.chaos_reverse_eng.output.vizceral.builder.DataBuilder;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static be.pcoppens.chaos_reverse_eng.ESBEntry.mapToESEntry;
+import static be.pcoppens.chaos_reverse_eng.input.ESBEntry.mapToESEntry;
 import static java.util.stream.Collectors.groupingBy;
 
 public class LogESBRepository {

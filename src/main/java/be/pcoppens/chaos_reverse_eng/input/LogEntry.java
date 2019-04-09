@@ -1,4 +1,6 @@
-package be.pcoppens.chaos_reverse_eng;
+package be.pcoppens.chaos_reverse_eng.input;
+
+import be.pcoppens.chaos_reverse_eng.model.EndPointEntry;
 
 import java.time.ZonedDateTime;
 import java.util.function.Function;

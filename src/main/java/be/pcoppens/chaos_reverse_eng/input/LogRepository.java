@@ -1,4 +1,8 @@
-package be.pcoppens.chaos_reverse_eng;
+package be.pcoppens.chaos_reverse_eng.input;
+
+import be.pcoppens.chaos_reverse_eng.model.EndPointEntry;
+import be.pcoppens.chaos_reverse_eng.model.OrderedService;
+import be.pcoppens.chaos_reverse_eng.model.Service;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -7,10 +11,9 @@ import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static be.pcoppens.chaos_reverse_eng.LogEntry.mapToLogEntry;
+import static be.pcoppens.chaos_reverse_eng.input.LogEntry.mapToLogEntry;
 
 public class LogRepository {
     //saved lines
@@ -23,13 +26,13 @@ public class LogRepository {
     private Map<EndPointEntry, Long> endpoints;
 
     // list of Sv (List of endpoints) and number of use it
-    private Map<Service, Long> services= new HashMap<>() ;
+    private Map<OrderedService, Long> services= new HashMap<>() ;
 
     // list of similar EndPointEntry by EndPointEntry
     private Map<EndPointEntry, Set<EndPointEntry>> similarEndpoints = new HashMap();
 
     // list of similar Service by Service
-    private Map<Service, Set<Service>> similarServices= new HashMap();
+    private Map<OrderedService, Set<OrderedService>> similarServices= new HashMap();
 
 
     private void read(InputStream input) throws IOException {
@@ -41,9 +44,10 @@ public class LogRepository {
     }
 
     private void buildServiceList(){
+        int i=0;
         if(callList==null)throw new IllegalArgumentException("callList must be initialized. Call LogRepository.read() first.");
         for (List<LogEntry> list : callList.values()) {
-            Service sv= new Service();
+            OrderedService sv= new OrderedService(Integer.toString(i++));
             for (LogEntry entry : list ) {
                 sv.add(entry.getEndPointEntry());
             }
@@ -95,7 +99,7 @@ public class LogRepository {
         services.keySet().forEach(sv-> {
             boolean found=false;
             if(!similarServices.containsKey(sv) ){
-                for (Service similarKey: similarServices.keySet()) {
+                for (OrderedService similarKey: similarServices.keySet()) {
                     //in future we can consider a missing endpoint with a very low score
                     if(sv.size()== similarKey.size()){
                         float score= 1;
@@ -122,10 +126,10 @@ public class LogRepository {
      * @param supportedFailure int: number of supported failures
      * @return
      */
-    private Set<Service> getFragileServices(int supportedFailure){
-        Set<Service> result= new HashSet<>();
+    private Set<OrderedService> getFragileServices(int supportedFailure){
+        Set<OrderedService> result= new HashSet<>();
         List<EndPointEntry> list= new ArrayList<>(similarEndpoints.keySet());
-        for (Service sv: similarServices.keySet()) {
+        for (OrderedService sv: similarServices.keySet()) {
             boolean isFragile=false;
             //check if each endpoint is redundant
             for (int i=0;!isFragile && i<sv.size();i++ ) {
@@ -172,17 +176,17 @@ public class LogRepository {
         Files.write(Paths.get(fileName), sb.toString().getBytes());
     }
 
-    private void detailledServicesToDotFile(Set<Service> highLevelServices, String fileName, String name) throws IOException {
+    private void detailledServicesToDotFile(Set<OrderedService> highLevelServices, String fileName, String name) throws IOException {
 
         StringBuffer sb= new StringBuffer("strict digraph \""+name +"\" {\n");
         int listId=1;
-        Set<Service> set= new HashSet<>(highLevelServices);
-        for (Service service: highLevelServices) {
-            Service top=null;
+        Set<OrderedService> set= new HashSet<>(highLevelServices);
+        for (OrderedService service: highLevelServices) {
+            OrderedService top=null;
             if(similarServices.containsKey(service))
                 top= service;
             else{
-                for (Service redundantService:similarServices.keySet()) {
+                for (OrderedService redundantService:similarServices.keySet()) {
                     if(similarServices.get(redundantService).contains(service))
                         top=redundantService;
                 }
@@ -190,7 +194,7 @@ public class LogRepository {
             set.add(top);
             set.addAll(similarServices.get(top));
         }
-        for (Service service: set) {
+        for (OrderedService service: set) {
 
             sb.append(String.format("Service_%d[shape=square];\n Service_%d->\"%s\"; ", listId, listId, service.get(0)));
             listId++;
@@ -212,7 +216,7 @@ public class LogRepository {
 
         //edges
         int listId=1;
-        for (Service service: similarServices.keySet()) {
+        for (OrderedService service: similarServices.keySet()) {
             sb.append(String.format("Service_%d[shape=square];\n Service_%d->endpoint%d; ", listId, listId, getId(list,service.get(0))));
             listId++;
             sb.append(service.stream().map(e->String.format("endpoint%d",getId(list,e))).collect(Collectors.joining(" -> ")));
