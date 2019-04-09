@@ -17,6 +17,70 @@ public class DataBuilder {
     private DataBuilder() {
     }
 
+    public static List<Node> addAll(Data data, List<ESBEntry> entries){
+        Map<String, Node> nodes= new HashMap<>();
+
+        Node internet= makeInternet(INTERNET);
+        data.getNodes().add(internet);
+
+        entries.forEach(esbEntry -> {
+            String client= esbEntry.getClient();
+            Node app=null;
+            if(nodes.containsKey(client)){
+                app= nodes.get(client);
+            }
+            else {
+                app= makeNode(client);
+                Node internalInternet= makeInternet(client);
+                app.getNodes().add(internalInternet);
+                nodes.put(client, app);
+                data.getNodes().add(app);
+                data.getConnections().add(makeConnection(internet.getName(),app.getName()));
+            }
+
+            Node start= makeNode(esbEntry.getEsbEndpoint());
+            start.setDisplayName(getName(esbEntry.getEsbEndpoint()));
+            Node end= makeNode(esbEntry.getBackendEntry());
+            end.setDisplayName(getName(esbEntry.getBackendEntry()));
+
+            AddNode(data.getNodes(), start);
+            AddNode(data.getNodes(), end);
+
+            data.getConnections().add(makeConnection(app.getName(),start.getName()));
+            data.getConnections().add(makeConnection(start.getName(),end.getName()));
+
+            //insert node to app
+            addNodeToNode(app, start);
+            addNodeToNode(app, end);
+            app.getConnections().add(makeConnection(internet.getName(),start.getName()));
+            app.getConnections().add(makeConnection(start.getName(),end.getName()));
+        });
+
+        //setApp warning
+        final List<Node> warningList= new ArrayList<>();
+        nodes.values().stream().filter(node ->hasWarning(node)).forEach(node -> {
+            Notice notice= new Notice();
+            notice.setSeverity(Notice.WARNING);
+            node.getNotices().add(notice);
+            warningList.add(node);
+        });
+        return warningList;
+    }
+    private static void AddNode(List<Node> nodes, Node child){
+        if(nodes.contains(child)){
+            Node node= nodes.get(nodes.indexOf(child));
+            if(node.getNotices()!=null && node.getNotices().size()>0){
+                Notice notice= node.getNotices().get(0);
+                if(! notice.getTitle().contains(child.getNotices().get(0).getTitle()))
+                    notice.setTitle(notice.getTitle()+", "+child.getNotices().get(0).getTitle());
+                notice.setSeverity(Notice.DEFAULT);
+            }
+        }
+        else {
+            nodes.add(child);
+        }
+    }
+
     public static void addNode(Data data, List<ESBEntry> entries){
         Map<String, Node> nodes= new HashMap<>();
         Node internet= makeInternet(ESB);
@@ -41,14 +105,57 @@ public class DataBuilder {
 
             app.getConnections().add(makeConnection(internet.getName(), start.getName(), 10));
             app.getConnections().add(makeConnection(start.getName(), end.getName(),10));
-
         });
-
-        setWarningApp(nodes);
     }
 
-    private static void setWarningApp(Map<String, Node> nodes) {
-        nodes.values().stream().filter(n->hasWarning(n)).forEach(n->n.set_class(WARNING));
+    public static void addNode(List<Node> nodes, List<ESBEntry> entries){
+        Node internet= makeInternet(ESB);
+        entries.stream().forEach(esbEntry->{
+            final String client= esbEntry.getClient();
+            nodes.stream().filter(n->n.getName().equalsIgnoreCase(client)).forEach(app->{
+                    Node start= makeNode(esbEntry.getEsbEndpoint());
+                    start.setDisplayName(getName(esbEntry.getEsbEndpoint()));
+                    Node end= makeNode(esbEntry.getBackendEntry());
+                    end.setDisplayName(getName(esbEntry.getBackendEntry()));
+
+                    if(!start.getName().equalsIgnoreCase(app.getName())){
+                        addNodeToNode(app, start);
+                    }
+                    addNodeToNode(app, end);
+
+                    app.getConnections().add(makeConnection(internet.getName(), start.getName(), 10));
+                    app.getConnections().add(makeConnection(start.getName(), end.getName(),10));
+            });
+        });
+    }
+
+    public static void addAllDefect(Data data, List<Node> entries){
+        Node internet= makeInternet(INTERNET);
+
+        entries.forEach(app -> {
+            AddNode(data.getNodes(), app);
+            data.getConnections().add(makeConnection(internet.getName(),app.getName()));
+        });
+
+    }
+
+    public static List<Node> addNode(Data data, Map<String,List<String>> groups){
+        List<Node> nodes= new ArrayList<>();
+
+        Node internet= makeInternet(INTERNET);
+        groups.keySet().stream().forEach(client->{
+            Node app=addApp(data, client, false);
+            app.getNodes().add(internet);
+            List<String> list= groups.get(client);
+            list.forEach(s->{
+                Node node= makeNode(s);
+                nodes.add(node);
+                addNodeToNode(app, node);
+                app.getConnections().add(makeConnection(internet.getName(), node.getName(), 10/list.size()));
+            });
+        });
+
+        return nodes;
     }
 
     private static boolean hasWarning(Node node){
@@ -56,6 +163,9 @@ public class DataBuilder {
 
         if(notices!=null && notices.stream().anyMatch(n->n.getSeverity()==Notice.WARNING) )
                 return true;
+
+        if(node.get_class()!=null && node.get_class().equalsIgnoreCase(WARNING))
+            return true;
 
         List<Node> nodes= node.getNodes();
         if(nodes!= null && nodes.stream().anyMatch(n->hasWarning(n)))
@@ -68,7 +178,6 @@ public class DataBuilder {
     public static Node makeNode(EndPointEntry entry){
         Node node= new Node();
         node.setRenderer(REGION);
-    //    node.set_class(WARNING);
 
         node.setName(entry.getVerb()+entry.getPath());
         Notice notice= new Notice();
@@ -89,14 +198,16 @@ public class DataBuilder {
         List<Node> nodes= parent.getNodes();
         if(nodes.contains(child)){
             Node node= nodes.get(nodes.indexOf(child));
-            Notice notice= node.getNotices().get(0);
-            notice.setTitle(notice.getTitle()+", "+child.getNotices().get(0).getTitle());
-            notice.setSeverity(Notice.DEFAULT);
+            if(node.getNotices()!=null && node.getNotices().size()>0){
+                Notice notice= node.getNotices().get(0);
+                if(! notice.getTitle().contains(child.getNotices().get(0).getTitle()))
+                    notice.setTitle(notice.getTitle()+", "+child.getNotices().get(0).getTitle());
+                notice.setSeverity(Notice.DEFAULT);
+            }
         }
         else {
             nodes.add(child);
         }
-
     }
 
 
@@ -111,7 +222,7 @@ public class DataBuilder {
         Data data= new Data();
         data.setName(name);
         data.setRenderer(REGION);
-        data.getNodes().add(makeInternet(ESB));
+        data.getNodes().add(makeInternet(INTERNET));
 
         return data;
     }
