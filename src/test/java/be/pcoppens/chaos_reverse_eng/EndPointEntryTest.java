@@ -44,17 +44,5 @@ class EndPointEntryTest {
         assertEquals(0, endPointEntry.getSimilarityScore(null));
     }
 
-    @Test
-    void samePrefix() {
-        String path="/api/path";
-        EndPointEntry endPointEntry= new EndPointEntry("GET", "host", path+"/456");
-        EndPointEntry endPointEntry2= new EndPointEntry("GET", "host", path+"/123");
-        EndPointEntry otherEndPointEntry2= new EndPointEntry("PUT", "host", path);
 
-        assertTrue(endPointEntry.shareSamePrefix(endPointEntry2,8));
-        assertFalse(endPointEntry.shareSamePrefix(endPointEntry2,11));
-        assertFalse(endPointEntry.shareSamePrefix(endPointEntry2,99));
-        //bad verb
-        assertFalse(endPointEntry.isSimilar(otherEndPointEntry2));
-    }
 }

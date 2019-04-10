@@ -33,4 +33,12 @@ public class CallEntry {
 
         return Objects.hash(getSource(), getTarget());
     }
+
+    @Override
+    public String toString() {
+        return "CallEntry{" +
+                "source=" + source +
+                ", target=" + target +
+                '}';
+    }
 }

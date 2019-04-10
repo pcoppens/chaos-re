@@ -1,5 +1,6 @@
 package be.pcoppens.chaos_reverse_eng.input;
 
+import be.pcoppens.chaos_reverse_eng.model.CallEntry;
 import be.pcoppens.chaos_reverse_eng.model.Service;
 import be.pcoppens.chaos_reverse_eng.model.ServiceGroup;
 
@@ -70,7 +71,7 @@ public class LogESBEntry {
                 else{
                     sv=services.get(esbEntry.getClient());
                 }
-                ;//add src and target
+                sv.add(new CallEntry(esbEntry.getEsbEndpoint(), esbEntry.getBackendEntry()));
 
             });
         }

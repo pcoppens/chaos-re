@@ -5,6 +5,7 @@ import be.pcoppens.chaos_reverse_eng.model.CallEntry;
 import be.pcoppens.chaos_reverse_eng.model.EndPointEntry;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class Service extends ArrayList<CallEntry> {
     private String name;
@@ -41,6 +42,9 @@ public class Service extends ArrayList<CallEntry> {
 
         return Objects.hash(super.hashCode(), getName());
     }
+    public static Function<String, Service> mapToService = (name) -> {
+        return new Service(name);
+    };
 
     @Override
     public String toString() {

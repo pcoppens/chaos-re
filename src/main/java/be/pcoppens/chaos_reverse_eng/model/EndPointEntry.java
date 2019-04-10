@@ -42,7 +42,7 @@ public class EndPointEntry {
 
     @Override
     public String toString() {
-        return verb!=null?verb:""+" "+host!=null?host:"" + " "+ path!=null?path:"";
+        return (verb!=null?verb:"")+" "+(host!=null?host:"") + " "+ (path!=null?path:"");
     }
 
 
