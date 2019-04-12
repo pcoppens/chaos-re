@@ -7,7 +7,7 @@ import be.pcoppens.chaos_reverse_eng.model.EndPointEntry;
 import java.util.*;
 import java.util.function.Function;
 
-public class Service extends ArrayList<CallEntry> {
+public class Service extends HashSet<CallEntry> {
     private String name;
 
     public Service(int i, String name) {

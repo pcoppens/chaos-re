@@ -25,11 +25,11 @@ public class ServiceGroup {
     }
 
     public Collection<Service> getServices() {
-        return Collections.unmodifiableCollection(services);
+        return services!=null?Collections.unmodifiableCollection(services):null;
     }
 
     public Collection<ServiceGroup> getGroups() {
-        return Collections.unmodifiableCollection(groups);
+        return groups!=null?Collections.unmodifiableCollection(groups):null;
     }
 
     public void setGroups(Collection<ServiceGroup> groups) {

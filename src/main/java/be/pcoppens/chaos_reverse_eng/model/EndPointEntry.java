@@ -1,7 +1,8 @@
 package be.pcoppens.chaos_reverse_eng.model;
 
-import be.pcoppens.chaos_reverse_eng.LevenshteinTool;
-
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -13,6 +14,8 @@ public class EndPointEntry {
     private String path;
     private String verb;
     private String host;
+
+    private Set<EndPointEntry> similars= new HashSet<>();
 
     public EndPointEntry(String verb, String host, String path){
         this.path= path;
@@ -40,39 +43,18 @@ public class EndPointEntry {
         return host;
     }
 
+    public Set<EndPointEntry> getSimilars() {
+        return Collections.unmodifiableSet(similars);
+    }
+
+    public void addSimilar(EndPointEntry entry){
+        similars.add(entry);
+    }
+
     @Override
     public String toString() {
-        return (verb!=null?verb:"")+" "+(host!=null?host:"") + " "+ (path!=null?path:"");
+        return (verb!=null?verb:"")+" "+(host!=null?host:"") + " "+ (path!=null?path:"") +" ["+(1+similars.size())+"]";
     }
-
-
-    public boolean isSimilar(EndPointEntry other){
-        boolean result=true;
-
-        if(verb==null || other.verb==null)
-            result= true;
-        else
-            result= this.verb.equalsIgnoreCase(other.verb);
-
-        return result && this.path.equalsIgnoreCase(other.path);
-    }
-
-    /**
-     * SimilarityScore is equal to 1- getLevenshteinDistance(): 1 means equals;
-     * different verb return 0
-     *
-     * @param other
-     * @return
-     */
-    public float getSimilarityScore(EndPointEntry other){
-        if(other==null || ((verb==null || other.verb==null) || !this.verb.equalsIgnoreCase(other.verb)))
-            return 1-1;
-        if(this.isSimilar(other))
-            return 1-0;
-        int score =LevenshteinTool.getLevenshteinDistance(this.path, other.path);
-        return 1-(score/Float.max(this.path.length(), other.path.length()));
-    }
-
 
     @Override
     public boolean equals(Object o) {
