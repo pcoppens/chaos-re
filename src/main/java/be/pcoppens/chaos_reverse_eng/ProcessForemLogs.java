@@ -25,17 +25,19 @@ public class ProcessForemLogs {
     private static ServiceGroup services;
     private static Set<EndPointEntry> fragiles;
     private static Set<Service> fragileSv;
+    private static List<ServiceGroup> pseudoApp;
     private static Data data;
 
     private static void readData() throws IOException{
         group= LogGroupEntry.readGroup(new FileInputStream(fileNameGroup), "Forem", false);
-        services= LogESBEntry.read(new FileInputStream(fileName), "ESB Client");
+        services= LogESBEntry.read(new FileInputStream(fileName), "All Clients");
     }
 
     private static void discover(){
         services= SystemDiscoverTool.removeSimilarEnpointEntryByService(services, 0.99f);
         fragiles= SystemDiscoverTool.getFragileEndpoint(services, 2);
         fragileSv= SystemDiscoverTool.getFragileService(services, 2);
+        pseudoApp= SystemDiscoverTool.getPseudoApp(services, 3);
     }
 
     private static void sysOut(){
@@ -50,6 +52,9 @@ public class ProcessForemLogs {
         data= DataBuilder.makeDataGlobal("Forem", "Views");
         DataBuilder.addToData(data, services);
         DataBuilder.addToData(data, new ServiceGroup("Fragile Client("+fragileSv.size()+")", fragileSv));
+        ServiceGroup serviceGroup= new ServiceGroup("APP("+pseudoApp.size()+")");
+        serviceGroup.setGroups(pseudoApp);
+        DataBuilder.addToData(data, serviceGroup);
 
         Files.write(Paths.get(vizceralOutput), new JSONObject(data).toString().getBytes());
     }

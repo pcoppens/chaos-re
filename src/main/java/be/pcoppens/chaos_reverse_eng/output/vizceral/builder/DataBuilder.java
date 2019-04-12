@@ -1,12 +1,14 @@
 package be.pcoppens.chaos_reverse_eng.output.vizceral.builder;
 
 import be.pcoppens.chaos_reverse_eng.input.ESBEntry;
+import be.pcoppens.chaos_reverse_eng.model.CallEntry;
 import be.pcoppens.chaos_reverse_eng.model.EndPointEntry;
 import be.pcoppens.chaos_reverse_eng.model.Service;
 import be.pcoppens.chaos_reverse_eng.model.ServiceGroup;
 import be.pcoppens.chaos_reverse_eng.output.vizceral.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DataBuilder {
     public static final String GLOBAL= "global";
@@ -63,7 +65,36 @@ public class DataBuilder {
         Connection conn= makeConnection(INTERNET, node.getName());
         parent.getConnections().add(conn);
 
-        //add callEntries to node
+        service.forEach(callEntry -> addCallEntry(node, callEntry));
+    }
+
+    public static void addCallEntry(Node node, CallEntry entry){
+        node.getNodes().add(makeNode(entry.getSource()));
+        node.getNodes().add(makeNode(entry.getTarget()));
+        node.getConnections().add(makeConnection(getName(entry.getSource()), getName(entry.getTarget())));
+    }
+
+    private static String getName(EndPointEntry entry){
+        if(entry.getHost().contains("0.0.0.0"))
+            return entry.getVerb()+entry.getPath().substring(10);
+        return entry.getVerb()+entry.getPath();
+    }
+
+
+    public static Node makeNode(EndPointEntry endPointEntry) {
+        Node node= makeNode(getName(endPointEntry));
+        if(!endPointEntry.getHost().contains("0.0.0.0")){
+            Notice notice= new Notice();
+            String title= endPointEntry.getHost().substring(7)+", " +
+                    endPointEntry.getSimilars().stream()
+                            .map(entry->entry.getHost()).map(s->s.substring(7)).collect( Collectors.joining( ", " ));
+            notice.setTitle(title);
+            if(endPointEntry.getSimilars().size()<1)
+                notice.setSeverity(Notice.WARNING);
+            node.getNotices().add(notice);
+        }
+
+        return node;
     }
 
     public static void addGroupToNode(Node parent, ServiceGroup group){
@@ -73,7 +104,7 @@ public class DataBuilder {
         Connection conn= makeConnection(INTERNET, node.getName());
         parent.getConnections().add(conn);
 
-        //add callEntries to node
+        group.getServices().forEach(sv->addServiceToNode(node, sv));
     }
 
     public static Node makeNode(String name){

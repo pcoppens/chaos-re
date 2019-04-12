@@ -7,6 +7,7 @@ import be.pcoppens.chaos_reverse_eng.model.Service;
 import be.pcoppens.chaos_reverse_eng.model.ServiceGroup;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SystemDiscoverTool {
     private SystemDiscoverTool(){}
@@ -101,6 +102,58 @@ public class SystemDiscoverTool {
         });
 
         return entries;
+    }
+    public static List<ServiceGroup> getPseudoApp(ServiceGroup group, int prefixSize){
+        if(group.getServices()==null)
+            throw new IllegalArgumentException("services must be not null");
+
+        Map<String, List<Service>> groups= new HashMap<>();
+
+        group.getServices().stream().forEach(service->{
+            String key= service.getName().substring(0, (prefixSize>service.getName().length()?service.getName().length():prefixSize));
+            if(groups.containsKey(key)){
+                groups.get(key).add(service);
+            }else {
+                List<Service> services= new ArrayList<>();
+                services.add(service);
+                groups.put(key, services);
+            }
+        });
+        return  groups.keySet().stream().map(key->
+                new ServiceGroup(groups.get(key).size()<2?
+                        groups.get(key).get(0).getName()
+                        :longestCommonPrefix(groups.get(key).stream().map(service -> service.getName()).collect(Collectors.toList()).toArray(new String[0])),
+                        groups.get(key))).collect(Collectors.toList());
+    }
+
+    public static String longestCommonPrefix(String[] strs) {
+        if(strs==null || strs.length ==0){
+            return "";
+        }
+
+        if(strs.length == 1){
+            return strs[0];
+        }
+
+        int i=0;
+        while(true){
+            boolean flag = true;
+            for(int j=1; j<strs.length; j++){
+                if(strs[j].length()<=i || strs[j-1].length() <=i
+                        || strs[j].charAt(i) != strs[j-1].charAt(i)){
+                    flag = false;
+                    break;
+                }
+            }
+
+            if(flag){
+                i++;
+            }else{
+                break;
+            }
+        }
+
+        return strs[0].substring(0, i);
     }
 
     public static Set<Service> getFragileService(ServiceGroup group, int fragility){
