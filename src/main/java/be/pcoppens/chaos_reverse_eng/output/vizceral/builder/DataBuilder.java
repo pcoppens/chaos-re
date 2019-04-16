@@ -58,6 +58,32 @@ public class DataBuilder {
         }
     }
 
+    /**
+     * Structure: root -> view ->app -> {node AND subnode in the same level}
+     * @param data
+     * @param serviceGroup
+     */
+    public static void addAppToData(Data data, ServiceGroup serviceGroup){
+        Node parent= makeNode(serviceGroup.getName());
+        parent.getNodes().add(makeInternet(serviceGroup.getName()));
+        data.getNodes().add(parent);
+        Connection connection= makeConnection(INTERNET, parent.getName());
+        data.getConnections().add(connection);
+
+        //process group
+        if(serviceGroup.getGroups()!=null){
+            serviceGroup.getGroups().forEach(group->{
+                Node node= makeNode(group.getName());
+                node.getNodes().add(makeInternet(group.getName()));
+                parent.getNodes().add(node);
+                Connection conn= makeConnection(INTERNET, node.getName());
+                parent.getConnections().add(conn);
+
+                group.getServices().forEach(sv->addServiceToParent(node, sv));
+            });
+        }
+    }
+
     public static void addServiceToNode(Node parent, Service service){
         Node node= makeNode(service.getName());
         node.getNodes().add(makeInternet(service.getName()));
@@ -66,6 +92,21 @@ public class DataBuilder {
         parent.getConnections().add(conn);
 
         service.forEach(callEntry -> addCallEntry(node, callEntry));
+    }
+
+    public static void addServiceToParent(Node parent, Service service){
+        Node node= makeNode(service.getName());
+        node.getNodes().add(makeInternet(service.getName()));
+        parent.getNodes().add(node);
+        Connection conn= makeConnection(INTERNET, node.getName());
+        parent.getConnections().add(conn);
+
+        service.forEach(entry -> {
+            parent.getNodes().add(makeNode(entry.getSource()));
+            parent.getNodes().add(makeNode(entry.getTarget()));
+            parent.getConnections().add(makeConnection(getName(entry.getSource()), getName(entry.getTarget())));
+            parent.getConnections().add(makeConnection(node.getName(), getName(entry.getSource())));
+        });
     }
 
     public static void addCallEntry(Node node, CallEntry entry){
@@ -106,6 +147,7 @@ public class DataBuilder {
 
         group.getServices().forEach(sv->addServiceToNode(node, sv));
     }
+
 
     public static Node makeNode(String name){
         Node node= new Node();

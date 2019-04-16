@@ -18,7 +18,7 @@ import java.util.*;
 import static java.util.stream.Collectors.groupingBy;
 
 public class ProcessForemLogs {
-    private static String fileName = "forem.txt";
+    private static String fileName = "forem.txt.csv";
     private static String fileNameGroup = "foremApp.txt";
     private static String vizceralOutput = "C:/Users/cppptr/Source/vizceral-example/src/sample_data.json";
     private static ServiceGroup group;
@@ -54,7 +54,7 @@ public class ProcessForemLogs {
         DataBuilder.addToData(data, new ServiceGroup("Fragile Client("+fragileSv.size()+")", fragileSv));
         ServiceGroup serviceGroup= new ServiceGroup("APP("+pseudoApp.size()+")");
         serviceGroup.setGroups(pseudoApp);
-        DataBuilder.addToData(data, serviceGroup);
+        DataBuilder.addAppToData(data, serviceGroup);
 
         Files.write(Paths.get(vizceralOutput), new JSONObject(data).toString().getBytes());
     }
@@ -63,7 +63,7 @@ public class ProcessForemLogs {
     public static void process() throws IOException{
         readData();
         discover();
-        sysOut();
+      //  sysOut();
         visceral();
     }
 
