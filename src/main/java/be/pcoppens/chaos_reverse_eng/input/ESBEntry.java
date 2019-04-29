@@ -70,7 +70,6 @@ public class ESBEntry {
                     else
                         end=s;
                 }
-
             }
         }
         if(start==null || end == null)

@@ -64,18 +64,18 @@ public class LogESBEntry {
 
             esbClient.forEach(esbEntry -> {
                 Service sv=null;
-                if(! services.containsKey(esbEntry.getClient())){
-                    sv= new Service(esbEntry.getClient());
-                    services.put(esbEntry.getClient(), sv);
+                String client= esbEntry.getClient();
+                if(! services.containsKey(client)){
+                    sv= new Service(client);
+                    services.put(client, sv);
                 }
                 else{
-                    sv=services.get(esbEntry.getClient());
+                    sv=services.get(client);
                 }
                 sv.add(new CallEntry(esbEntry.getEsbEndpoint(), esbEntry.getBackendEntry()));
 
             });
         }
-
         return new ServiceGroup(name, services.values());
     }
 }

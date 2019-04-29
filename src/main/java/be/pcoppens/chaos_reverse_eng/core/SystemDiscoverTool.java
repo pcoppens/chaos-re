@@ -1,6 +1,5 @@
 package be.pcoppens.chaos_reverse_eng.core;
 
-import be.pcoppens.chaos_reverse_eng.core.LevenshteinTool;
 import be.pcoppens.chaos_reverse_eng.model.CallEntry;
 import be.pcoppens.chaos_reverse_eng.model.EndPointEntry;
 import be.pcoppens.chaos_reverse_eng.model.Service;
@@ -35,13 +34,17 @@ public class SystemDiscoverTool {
         if(group.getServices()==null)
             throw new IllegalArgumentException("services must be not null");
 
-        Set<EndPointEntry> entries= new HashSet<>();
-
         List<Service> traitedService= new ArrayList<>();
         group.getServices().forEach(service ->{
+            Set<EndPointEntry> entries= new HashSet<>();
             Service sv= new Service(service.getName());
+            if(sv.getName().equalsIgnoreCase("enretp_ext")){
+                System.out.println(service);
+            }
             service.forEach(entry->{
-
+                if(sv.getName().equalsIgnoreCase("enretp_ext")){
+                    System.out.println("entry: "+ entry);
+                }
                 EndPointEntry src=entry.getSource(), target=entry.getTarget();
 
                 if(entries.isEmpty()){
@@ -50,9 +53,7 @@ public class SystemDiscoverTool {
                 }else{
                     //is equals: do nothing
                     if(! entries.contains(entry.getSource())){
-                        EndPointEntry foundSrc= entries.stream()
-                                .filter(endPointEntry -> getSimilarityScore(endPointEntry, entry.getSource()) > similarityScore )
-                                .findAny().orElse(null);
+                        EndPointEntry foundSrc= getSimilar(entries, entry.getSource(), similarityScore);
                         if(foundSrc!=null){
                             foundSrc.addSimilar(src);
                             src= foundSrc;
@@ -62,9 +63,7 @@ public class SystemDiscoverTool {
                     }
                     //is equals: do nothing
                     if(! entries.contains(entry.getTarget())){
-                        EndPointEntry foundTarget= entries.stream()
-                                .filter(endPointEntry -> getSimilarityScore(endPointEntry, entry.getTarget()) > similarityScore )
-                                .findAny().orElse(null);
+                        EndPointEntry foundTarget= getSimilar(entries, entry.getTarget(), similarityScore);
                         if(foundTarget!=null){
                             foundTarget.addSimilar(target);
                             target= foundTarget;
@@ -72,16 +71,33 @@ public class SystemDiscoverTool {
                             entries.add(target);
                         }
                     }
+
+                }
+                if(sv.getName().equalsIgnoreCase("enretp_ext")){
+                    System.out.println("enretp_ext SET: ");
+                    entries.forEach(a-> System.out.println("\t"+a));
+                    System.out.println("Target: "+target);
                 }
 
-                sv.add(new CallEntry(src, target));
-
             });
+            service.forEach(entry->sv.add(
+                    new CallEntry(getSimilar(entries, entry.getSource(), similarityScore),
+                                  getSimilar(entries, entry.getTarget(), similarityScore))));
+
+            if(sv.getName().equalsIgnoreCase("enretp_ext")){
+                System.out.println(sv);
+            }
             traitedService.add(sv);
         });
 
-        System.out.println("entries: "+entries.size());
+
         return new ServiceGroup(group.getName(), traitedService);
+    }
+
+    private static EndPointEntry getSimilar(Set<EndPointEntry> entries, EndPointEntry entry, float similarityScore ){
+       return entries.stream()
+                .filter(endPointEntry -> getSimilarityScore(endPointEntry, entry) > similarityScore )
+                .findAny().orElse(null);
     }
 
     public static Set<EndPointEntry> getFragileEndpoint(ServiceGroup group, int fragility){

@@ -71,6 +71,5 @@ public class LogGroupEntry {
 
             return ServiceGroup.create(name, groups);
         }
-
     }
 }
