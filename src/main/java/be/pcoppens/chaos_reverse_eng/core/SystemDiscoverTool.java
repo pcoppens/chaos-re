@@ -42,9 +42,7 @@ public class SystemDiscoverTool {
                 System.out.println(service);
             }
             service.forEach(entry->{
-                if(sv.getName().equalsIgnoreCase("enretp_ext")){
-                    System.out.println("entry: "+ entry);
-                }
+
                 EndPointEntry src=entry.getSource(), target=entry.getTarget();
 
                 if(entries.isEmpty()){
@@ -73,20 +71,13 @@ public class SystemDiscoverTool {
                     }
 
                 }
-                if(sv.getName().equalsIgnoreCase("enretp_ext")){
-                    System.out.println("enretp_ext SET: ");
-                    entries.forEach(a-> System.out.println("\t"+a));
-                    System.out.println("Target: "+target);
-                }
 
             });
             service.forEach(entry->sv.add(
                     new CallEntry(getSimilar(entries, entry.getSource(), similarityScore),
                                   getSimilar(entries, entry.getTarget(), similarityScore))));
 
-            if(sv.getName().equalsIgnoreCase("enretp_ext")){
-                System.out.println(sv);
-            }
+
             traitedService.add(sv);
         });
 

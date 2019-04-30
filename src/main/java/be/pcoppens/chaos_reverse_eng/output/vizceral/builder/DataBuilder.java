@@ -7,6 +7,10 @@ import be.pcoppens.chaos_reverse_eng.model.Service;
 import be.pcoppens.chaos_reverse_eng.model.ServiceGroup;
 import be.pcoppens.chaos_reverse_eng.output.vizceral.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,6 +30,7 @@ public class DataBuilder {
         Data data= new Data();
         data.setName(name);
         data.setRenderer(REGION);
+        data.setServerUpdateTime(Instant.now().getEpochSecond());
         data.getNodes().add(makeInternet(entryName));
 
         return data;
@@ -154,6 +159,7 @@ public class DataBuilder {
         node.setName(name);
         node.setRenderer(REGION);
         node.set_class(NORMAL);
+        node.setUpdated(Instant.now().getEpochSecond());
 
         return node;
     }

@@ -9,7 +9,7 @@ public class Data {
     private String name;
     private List<Node> nodes = new ArrayList<>();
     private List<Connection> connections = new ArrayList<>();
-    private Integer serverUpdateTime;
+    private long serverUpdateTime;
 
     public Data() {
     }
@@ -46,11 +46,11 @@ public class Data {
         this.connections = connections;
     }
 
-    public Integer getServerUpdateTime() {
+    public long getServerUpdateTime() {
         return serverUpdateTime;
     }
 
-    public void setServerUpdateTime(Integer serverUpdateTime) {
+    public void setServerUpdateTime(long serverUpdateTime) {
         this.serverUpdateTime = serverUpdateTime;
     }
 }

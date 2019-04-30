@@ -19,7 +19,7 @@ public class Node {
     @JsonProperty("class")
     private String _class;
     private List<Connection> connections = new ArrayList<>();
-    private Integer updated;
+    private long updated;
     private Double maxVolume;
     private List<Notice> notices = new ArrayList<>();
 
@@ -102,11 +102,11 @@ public class Node {
         this.connections = connections;
     }
 
-    public Integer getUpdated() {
+    public long getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Integer updated) {
+    public void setUpdated(long updated) {
         this.updated = updated;
     }
 
