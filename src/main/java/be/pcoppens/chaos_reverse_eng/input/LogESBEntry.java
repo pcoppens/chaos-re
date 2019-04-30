@@ -1,7 +1,7 @@
 package be.pcoppens.chaos_reverse_eng.input;
 
 import be.pcoppens.chaos_reverse_eng.model.CallEntry;
-import be.pcoppens.chaos_reverse_eng.model.Service;
+import be.pcoppens.chaos_reverse_eng.model.EsbService;
 import be.pcoppens.chaos_reverse_eng.model.ServiceGroup;
 
 import java.io.BufferedReader;
@@ -56,17 +56,17 @@ public class LogESBEntry {
     };
 
     public static ServiceGroup read(InputStream input, String name) throws IOException {
-        Map<String,Service> services = new HashMap();
+        Map<String, EsbService> services = new HashMap();
 
         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
             List<String> lines = buffer.lines().collect(Collectors.toList());
             List<ESBEntry> esbClient= lines.stream().map(mapToESEntry).filter(entry->entry!=null).collect(Collectors.toList());
 
             esbClient.forEach(esbEntry -> {
-                Service sv=null;
+                EsbService sv=null;
                 String client= esbEntry.getClient();
                 if(! services.containsKey(client)){
-                    sv= new Service(client);
+                    sv= new EsbService(client);
                     services.put(client, sv);
                 }
                 else{

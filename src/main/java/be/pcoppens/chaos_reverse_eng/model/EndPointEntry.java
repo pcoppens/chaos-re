@@ -51,6 +51,10 @@ public class EndPointEntry {
         similars.add(entry);
     }
 
+    public boolean isSimilar(EndPointEntry other){
+        return this.verb.equalsIgnoreCase(other.verb) && this.path.equalsIgnoreCase(other.path);
+    }
+
     @Override
     public String toString() {
         return (verb!=null?verb:"")+" "+(host!=null?host:"") + " "+ (path!=null?path:"") +" ["+(1+similars.size())+"]";

@@ -4,7 +4,7 @@ import be.pcoppens.chaos_reverse_eng.core.SystemDiscoverTool;
 import be.pcoppens.chaos_reverse_eng.input.LogESBEntry;
 import be.pcoppens.chaos_reverse_eng.input.LogGroupEntry;
 import be.pcoppens.chaos_reverse_eng.model.EndPointEntry;
-import be.pcoppens.chaos_reverse_eng.model.Service;
+import be.pcoppens.chaos_reverse_eng.model.EsbService;
 import be.pcoppens.chaos_reverse_eng.model.ServiceGroup;
 import be.pcoppens.chaos_reverse_eng.output.vizceral.Data;
 import be.pcoppens.chaos_reverse_eng.output.vizceral.builder.DataBuilder;
@@ -24,7 +24,7 @@ public class ProcessForemLogs {
     private static ServiceGroup group;
     private static ServiceGroup services;
     private static Set<EndPointEntry> fragiles;
-    private static Set<Service> fragileSv;
+    private static Set<EsbService> fragileSv;
     private static List<ServiceGroup> pseudoApp;
     private static Data data;
 
@@ -44,7 +44,7 @@ public class ProcessForemLogs {
         fragiles.forEach(endPointEntry -> System.out.println(endPointEntry));
         fragileSv.forEach(sv -> System.out.println(sv));
         System.out.println("fragile endpoints: "+fragiles.size());
-        System.out.println("services: "+services.getServices().size());
+        System.out.println("services: "+services.getEsbServices().size());
         System.out.println("fragile services: "+fragileSv.size());
     }
 

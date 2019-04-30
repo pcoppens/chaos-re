@@ -2,7 +2,7 @@ package be.pcoppens.chaos_reverse_eng.core;
 
 import be.pcoppens.chaos_reverse_eng.model.CallEntry;
 import be.pcoppens.chaos_reverse_eng.model.EndPointEntry;
-import be.pcoppens.chaos_reverse_eng.model.Service;
+import be.pcoppens.chaos_reverse_eng.model.EsbService;
 import be.pcoppens.chaos_reverse_eng.model.ServiceGroup;
 
 import java.util.*;
@@ -31,13 +31,13 @@ public class SystemDiscoverTool {
     }
 
     public static ServiceGroup removeSimilarEnpointEntryByService(ServiceGroup group, float similarityScore){
-        if(group.getServices()==null)
+        if(group.getEsbServices()==null)
             throw new IllegalArgumentException("services must be not null");
 
-        List<Service> traitedService= new ArrayList<>();
-        group.getServices().forEach(service ->{
+        List<EsbService> traitedEsbService = new ArrayList<>();
+        group.getEsbServices().forEach(service ->{
             Set<EndPointEntry> entries= new HashSet<>();
-            Service sv= new Service(service.getName());
+            EsbService sv= new EsbService(service.getName());
             if(sv.getName().equalsIgnoreCase("enretp_ext")){
                 System.out.println(service);
             }
@@ -78,11 +78,11 @@ public class SystemDiscoverTool {
                                   getSimilar(entries, entry.getTarget(), similarityScore))));
 
 
-            traitedService.add(sv);
+            traitedEsbService.add(sv);
         });
 
 
-        return new ServiceGroup(group.getName(), traitedService);
+        return new ServiceGroup(group.getName(), traitedEsbService);
     }
 
     private static EndPointEntry getSimilar(Set<EndPointEntry> entries, EndPointEntry entry, float similarityScore ){
@@ -92,12 +92,12 @@ public class SystemDiscoverTool {
     }
 
     public static Set<EndPointEntry> getFragileEndpoint(ServiceGroup group, int fragility){
-        if(group.getServices()==null)
+        if(group.getEsbServices()==null)
             throw new IllegalArgumentException("services must be not null");
 
         Set<EndPointEntry> entries= new HashSet<>();
 
-        group.getServices().stream().forEach(service->{
+        group.getEsbServices().stream().forEach(service->{
             service.forEach(callEntry -> {
                 if(!callEntry.getSource().getHost().contains("0.0.0.0") && callEntry.getSource().getSimilars().size()+1<fragility){
                     entries.add(callEntry.getSource());
@@ -111,19 +111,19 @@ public class SystemDiscoverTool {
         return entries;
     }
     public static List<ServiceGroup> getPseudoApp(ServiceGroup group, int prefixSize){
-        if(group.getServices()==null)
+        if(group.getEsbServices()==null)
             throw new IllegalArgumentException("services must be not null");
 
-        Map<String, List<Service>> groups= new HashMap<>();
+        Map<String, List<EsbService>> groups= new HashMap<>();
 
-        group.getServices().stream().forEach(service->{
+        group.getEsbServices().stream().forEach(service->{
             String key= service.getName().substring(0, (prefixSize>service.getName().length()?service.getName().length():prefixSize));
             if(groups.containsKey(key)){
                 groups.get(key).add(service);
             }else {
-                List<Service> services= new ArrayList<>();
-                services.add(service);
-                groups.put(key, services);
+                List<EsbService> esbServices = new ArrayList<>();
+                esbServices.add(service);
+                groups.put(key, esbServices);
             }
         });
         return  groups.keySet().stream().map(key->
@@ -163,13 +163,13 @@ public class SystemDiscoverTool {
         return strs[0].substring(0, i);
     }
 
-    public static Set<Service> getFragileService(ServiceGroup group, int fragility){
-        if(group.getServices()==null)
+    public static Set<EsbService> getFragileService(ServiceGroup group, int fragility){
+        if(group.getEsbServices()==null)
             throw new IllegalArgumentException("services must be not null");
 
-        Set<Service> entries= new HashSet<>();
+        Set<EsbService> entries= new HashSet<>();
 
-        group.getServices().stream().forEach(service->{
+        group.getEsbServices().stream().forEach(service->{
             service.forEach(callEntry -> {
                 if(!callEntry.getSource().getHost().contains("0.0.0.0") && callEntry.getSource().getSimilars().size()+1<fragility){
                     entries.add(service);

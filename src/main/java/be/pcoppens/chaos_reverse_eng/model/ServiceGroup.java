@@ -2,18 +2,17 @@ package be.pcoppens.chaos_reverse_eng.model;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ServiceGroup {
     private String name;
-    private Collection<Service> services;
+    private Collection<EsbService> esbServices;
     private Collection<ServiceGroup> groups;
 
-    public ServiceGroup(String name, Collection<Service> services) {
+    public ServiceGroup(String name, Collection<EsbService> esbServices) {
         this.name = name;
-        this.services = services;
+        this.esbServices = esbServices;
     }
 
     public ServiceGroup(String name) {
@@ -24,8 +23,8 @@ public class ServiceGroup {
         return name;
     }
 
-    public Collection<Service> getServices() {
-        return services!=null?Collections.unmodifiableCollection(services):null;
+    public Collection<EsbService> getEsbServices() {
+        return esbServices !=null?Collections.unmodifiableCollection(esbServices):null;
     }
 
     public Collection<ServiceGroup> getGroups() {
@@ -33,7 +32,7 @@ public class ServiceGroup {
     }
 
     public void setGroups(Collection<ServiceGroup> groups) {
-        if(services!=null)
+        if(esbServices !=null)
             throw new IllegalArgumentException("ServiceGroup accept groups only is services is null !");
         this.groups = groups;
     }
@@ -51,7 +50,7 @@ public class ServiceGroup {
     public String toString() {
         return "ServiceGroup{" +
                 "name='" + name + '\'' +
-                ",\n services=[" + (services==null?"null":services.stream().map(entry->entry.toString()).collect( Collectors.joining( ", " ) ) )+ "]"+
+                ",\n services=[" + (esbServices ==null?"null": esbServices.stream().map(entry->entry.toString()).collect( Collectors.joining( ", " ) ) )+ "]"+
                 ",\n groups=[" + (groups==null?"null":groups.stream().map(entry->entry.toString()).collect( Collectors.joining( ", " ) )  )+ "]"+
                 '}';
     }

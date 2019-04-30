@@ -1,7 +1,7 @@
 package be.pcoppens.chaos_reverse_eng.input;
 
 
-import be.pcoppens.chaos_reverse_eng.model.Service;
+import be.pcoppens.chaos_reverse_eng.model.EsbService;
 import be.pcoppens.chaos_reverse_eng.model.ServiceGroup;
 
 import java.io.BufferedReader;
@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static be.pcoppens.chaos_reverse_eng.model.Service.mapToService;
+import static be.pcoppens.chaos_reverse_eng.model.EsbService.mapToService;
 
 public class LogGroupEntry {
     private String name;
@@ -32,7 +32,7 @@ public class LogGroupEntry {
     }
 
 
-    public List<Service> getChildsAsServices() {
+    public List<EsbService> getChildsAsServices() {
         return childs.stream().map(mapToService).collect(Collectors.toList());
     }
 

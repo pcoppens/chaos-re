@@ -1,17 +1,12 @@
 package be.pcoppens.chaos_reverse_eng.output.vizceral.builder;
 
-import be.pcoppens.chaos_reverse_eng.input.ESBEntry;
 import be.pcoppens.chaos_reverse_eng.model.CallEntry;
 import be.pcoppens.chaos_reverse_eng.model.EndPointEntry;
-import be.pcoppens.chaos_reverse_eng.model.Service;
+import be.pcoppens.chaos_reverse_eng.model.EsbService;
 import be.pcoppens.chaos_reverse_eng.model.ServiceGroup;
 import be.pcoppens.chaos_reverse_eng.output.vizceral.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.*;
 import java.util.stream.Collectors;
 
 public class DataBuilder {
@@ -50,8 +45,8 @@ public class DataBuilder {
         data.getConnections().add(conn);
 
         //process services
-        if(serviceGroup.getServices()!=null){
-            serviceGroup.getServices().forEach(service ->{
+        if(serviceGroup.getEsbServices()!=null){
+            serviceGroup.getEsbServices().forEach(service ->{
                 addServiceToNode(node, service);
             });
         }
@@ -84,29 +79,29 @@ public class DataBuilder {
                 Connection conn= makeConnection(INTERNET, node.getName());
                 parent.getConnections().add(conn);
 
-                group.getServices().forEach(sv->addServiceToParent(node, sv));
+                group.getEsbServices().forEach(sv->addServiceToParent(node, sv));
             });
         }
     }
 
-    public static void addServiceToNode(Node parent, Service service){
-        Node node= makeNode(service.getName());
-        node.getNodes().add(makeInternet(service.getName()));
+    public static void addServiceToNode(Node parent, EsbService esbService){
+        Node node= makeNode(esbService.getName());
+        node.getNodes().add(makeInternet(esbService.getName()));
         parent.getNodes().add(node);
         Connection conn= makeConnection(INTERNET, node.getName());
         parent.getConnections().add(conn);
 
-        service.forEach(callEntry -> addCallEntry(node, callEntry));
+        esbService.forEach(callEntry -> addCallEntry(node, callEntry));
     }
 
-    public static void addServiceToParent(Node parent, Service service){
-        Node node= makeNode(service.getName());
-        node.getNodes().add(makeInternet(service.getName()));
+    public static void addServiceToParent(Node parent, EsbService esbService){
+        Node node= makeNode(esbService.getName());
+        node.getNodes().add(makeInternet(esbService.getName()));
         parent.getNodes().add(node);
         Connection conn= makeConnection(INTERNET, node.getName());
         parent.getConnections().add(conn);
 
-        service.forEach(entry -> {
+        esbService.forEach(entry -> {
             parent.getNodes().add(makeNode(entry.getSource()));
             parent.getNodes().add(makeNode(entry.getTarget()));
             parent.getConnections().add(makeConnection(getName(entry.getSource()), getName(entry.getTarget())));
@@ -150,7 +145,7 @@ public class DataBuilder {
         Connection conn= makeConnection(INTERNET, node.getName());
         parent.getConnections().add(conn);
 
-        group.getServices().forEach(sv->addServiceToNode(node, sv));
+        group.getEsbServices().forEach(sv->addServiceToNode(node, sv));
     }
 
 
