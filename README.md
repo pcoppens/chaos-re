@@ -1,6 +1,14 @@
 # chaos-re
-Chaos Reverse-engineering
+Chaos engineering approach by Reverse-engineering.
+
 git: https://github.com/pcoppens/chaos-re
+
+# Introduction
+Chaos engineering leads to more resilient systems and builds confidence in a software product based on a large scale distributed architecture. 
+
+The discipline is based on the definition of a steady-state and the assertion that it will remain stable when a fault is injected in  production.
+
+The approach by Reverse-engineering reduce, or eliminate the intuitive approach by offer a visual representation of the system.
 
 # Structure
 /
