@@ -1,3 +1,0 @@
-Emploi,aidesemploi,matchingde,matchingengine
-Controle,ape,efficy,noe_as,objectiva
-Batch,batch,batch_envoicentralise,batchbced,batchonem,batchts

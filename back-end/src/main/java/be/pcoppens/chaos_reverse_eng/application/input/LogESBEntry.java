@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 
 import static be.pcoppens.chaos_reverse_eng.application.input.ESBEntry.mapToESEntry;
 
+/**
+ * Transform a log InputStream to ServiceGroup.
+ */
 public class LogESBEntry {
     private String src;
     private List<String> targets;
@@ -50,11 +53,22 @@ public class LogESBEntry {
                 '}';
     }
 
+    /**
+     * Create a LogESBEntry from a log line
+     */
     public static Function<String, LogESBEntry> mapToLogESBEntry = (line) -> {
         String[] p = line.split(",");
         return new LogESBEntry(p[0], p.length<2?null:Arrays.asList(p).subList(1, p.length-1));
     };
 
+    /**
+     * @pre: input is a readable InputStream that represent a ESB log
+     * @pre: name is not null and not empty.
+     * @param input
+     * @param name
+     * @return a ServiceGroup with name 'name' and all services from log lines.
+     * @throws IOException
+     */
     public static ServiceGroup read(InputStream input, String name) throws IOException {
         Map<String, EsbService> services = new HashMap();
 
@@ -73,7 +87,6 @@ public class LogESBEntry {
                     sv=services.get(client);
                 }
                 sv.add(new CallEntry(esbEntry.getEsbEndpoint(), esbEntry.getBackendEntry()));
-
             });
         }
         return new ServiceGroup(name, services.values());

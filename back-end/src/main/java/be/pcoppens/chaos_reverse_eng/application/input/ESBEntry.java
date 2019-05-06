@@ -5,6 +5,9 @@ import be.pcoppens.chaos_reverse_eng.application.model.EndPointEntry;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * Represent an entry of ESB in log.
+ */
 public class ESBEntry {
 
     //properties
@@ -49,6 +52,9 @@ public class ESBEntry {
                 backendEntry.equals(esbEntry.backendEntry);
     }
 
+    /**
+     * build a entry from a String representation {clientName, serviceSource, serviceTarget}
+     */
     public static Function<String, ESBEntry> mapToESEntry = (line) -> {
         String[] p = line.split(",");
         // ignore line that contain less than 3 column (client, entry, backend)

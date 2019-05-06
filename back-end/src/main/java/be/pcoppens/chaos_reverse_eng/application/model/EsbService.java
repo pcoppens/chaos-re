@@ -4,6 +4,9 @@ package be.pcoppens.chaos_reverse_eng.application.model;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ * An EsbService is a Set of CallEntry with a name.
+ */
 public class EsbService extends HashSet<CallEntry> {
     private String name;
 

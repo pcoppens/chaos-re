@@ -1,9 +1,12 @@
-package be.pcoppens.generator;
+package be.pcoppens.chaos_reverse_eng.application.generator;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class RunSystem implements Runnable {
+/**
+ * Threat for RunSystem.
+ */
+class RunSystem implements Runnable {
     boolean isRunning=true;
     private DistribuedSystem ds;
     private OutputStream out;

@@ -5,6 +5,9 @@ import be.pcoppens.chaos_reverse_eng.application.model.EndPointEntry;
 import java.time.ZonedDateTime;
 import java.util.function.Function;
 
+/**
+ * Represent a log line entry.
+ */
 public class LogEntry {
     private String svId;
     private EndPointEntry endPointEntry;

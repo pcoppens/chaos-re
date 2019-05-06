@@ -1,4 +1,4 @@
-package be.pcoppens.generator;
+package be.pcoppens.chaos_reverse_eng.application.generator;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
 
-public class EndPoint {
+/**
+ * Represent an endpoint.
+ * Used by generator only.
+ */
+class EndPoint {
 
     private static final String HOST = "SERVER";
     private static final String[] VERBS= {"GET", "POST","DELETE", "PUT"};
@@ -22,6 +26,11 @@ public class EndPoint {
     private int pathLength;
     private String id= "f"+count++;
 
+    /**
+     * build a endpoint with a path.length of pathLength.
+     * @pre: pathLength > 0
+     * @param pathLength
+     */
     public EndPoint(int pathLength){
         if(pathLength<1)
             throw new IllegalArgumentException("pathLength must be greater than 0");
@@ -29,6 +38,9 @@ public class EndPoint {
         path= buildPath();
     }
 
+    /**
+     * build a endpoint with a path.length of random 1..5.
+     */
     public EndPoint(){
         this.pathLength= rnd.nextInt(5)+1;
         path= buildPath();
@@ -40,10 +52,18 @@ public class EndPoint {
         this.host= host;
     }
 
+    /**
+     *
+     * @return duplicate endpoint with an another (random) host
+     */
     public EndPoint getRedondantServer(){
         return new EndPoint(path, verb, HOST+getRandomString());
     }
 
+    /**
+     *
+     * @return a new endpoint with the same verb & host.
+     */
     public EndPoint getRedondantSameServer(){
         return new EndPoint(buildPath(), verb, host);
     }
@@ -57,6 +77,10 @@ public class EndPoint {
         return sb.toString();
     }
 
+    /**
+     * return a random word from the kant.txt file.
+     * @return
+     */
     public static String getRandomString() {
         File file = new File(EndPoint.class.getClassLoader().getResource("kant.txt").getFile());
         List<String> lines = null;
@@ -75,6 +99,10 @@ public class EndPoint {
         }
     }
 
+    /**
+     *
+     * @return thr URI for the endpoint in format verb+" "+host+path
+     */
     public String getURI(){
         return verb+" "+host+path;
     }

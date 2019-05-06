@@ -3,6 +3,10 @@ package be.pcoppens.chaos_reverse_eng.application.model;
 
 import java.util.*;
 
+/**
+ * A Service is a list of EndPointEntry.
+ * A Service has a name: "Sv"+a sequence number.
+ */
 public class Service extends ArrayList<EndPointEntry> {
     private static int count=1;
     private String name;

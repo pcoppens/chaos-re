@@ -1,0 +1,8 @@
+strict digraph "Fragile" {
+Service_1[shape=square];
+ Service_1->"POST SERVERuniversal /useful/implanted/indulge [1]"; "POST SERVERuniversal /useful/implanted/indulge [1]" -> "GET SERVERinstinct /faculties/devote/however/possibly [1]";
+Service_2[shape=square];
+ Service_2->"GET SERVERword /system/duty/word/however [1]"; "GET SERVERword /system/duty/word/however [1]" -> "DELETE SERVERimproving /himself [1]" -> "GET SERVERwith /South/wills/such/their [1]" -> "GET SERVERgifts /what/should/system/talent [1]";
+Service_3[shape=square];
+ Service_3->"POST SERVERasks /comfortable/might/inclination/enlarging [1]"; "POST SERVERasks /comfortable/might/inclination/enlarging [1]" -> "GET SERVERimproving /indulgence/what/respects/species [1]" -> "PUT SERVERalso /should/maxim/some/prefers/then [1]";
+}

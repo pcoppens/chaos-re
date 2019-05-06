@@ -1,4 +1,4 @@
-package be.pcoppens.generator;
+package be.pcoppens.chaos_reverse_eng.application.generator;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,9 +9,16 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Generate a random system and simulate log entries.
+ * Write log file result in runDs.txt
+ * Write dot file representaion in runDs.dot
+ */
 public class DistribuedSystem {
 
     private static Random rnd= new Random(System.currentTimeMillis());
+    private static String LOG_FILENAME= "runDs.txt";
+    private static String DOT_FILENAME= "runDs.txt";
 
     private Set<EndPoint> endpoints= new HashSet<>();
     private Map<EndPoint, List<EndPoint>> redondants= new HashMap<>();
@@ -19,6 +26,15 @@ public class DistribuedSystem {
     private List<EndPoint> redondantFailure= new ArrayList<>();
 
 
+    /**
+     *
+     * Build a generated system.
+     * @param redondant
+     * @param endpoint number of endpoints
+     * @param num number of services
+     * @param avoidCrossing avoid sharing endpoint from different services
+     * @return the generated system.
+     */
     public static DistribuedSystem buildSystem(int redondant, int endpoint, int num, boolean avoidCrossing){
         DistribuedSystem distribuedSystem= new DistribuedSystem();
         for (int i = 0; i < endpoint; i++) {
@@ -34,6 +50,15 @@ public class DistribuedSystem {
         return distribuedSystem;
     }
 
+    /**
+     * Build a generated system.
+     * @param redondant
+     * @param endpoint number of endpoints
+     * @param num number of services
+     * @param avoidCrossing avoid sharing endpoint from different services
+     * @param failure number of failure in system (non redondant endpoint)
+     * @return the generated system.
+     */
     public static DistribuedSystem buildSystem(int redondant, int endpoint, int num, boolean avoidCrossing, int failure){
         if(failure >endpoint)
             throw new IllegalArgumentException("failure cannot be greater than endpoint.");
@@ -67,7 +92,6 @@ public class DistribuedSystem {
             }
             services.add(service);
         }
-
     }
 
     /**
@@ -83,6 +107,9 @@ public class DistribuedSystem {
         return index>=list.size()?f:list.get(index);
     }
 
+    /**
+     * for each services in the generated system: write a log line in System.out.
+     */
     public void runSystem(){
         for (List<EndPoint> service:services) {
             String correlationId=  UUID.randomUUID().toString();
@@ -92,7 +119,12 @@ public class DistribuedSystem {
         }
     }
 
-    public void runSystem(OutputStream out) throws IOException {
+    /**
+     * for each services in the generated system: write a log line in out.
+     * @param out
+     * @throws IOException
+     */
+    void runSystem(OutputStream out) throws IOException {
         for (List<EndPoint> service:services) {
             String correlationId=  UUID.randomUUID().toString();
             for (EndPoint f: service) {
@@ -126,13 +158,16 @@ public class DistribuedSystem {
         sb.append("\nRedondant Failures{\n");
         for (EndPoint f: redondantFailure) {
             sb.append(String.format("-- %s \n", f.getId()));
-
         }
         sb.append("}");
         return sb.toString();
     }
 
-    public void toDotFile(String fileName) {
+    /**
+     * package visibility for testing.
+     * @param fileName
+     */
+    void toDotFile(String fileName) {
         StringBuffer sb= new StringBuffer("digraph System{\n");
         // nodes
         for (EndPoint f: endpoints) {
@@ -180,10 +215,20 @@ public class DistribuedSystem {
     }
 
 
+    /**
+     * Build a random system with:
+     *  - redondance of 1
+     *  - 12 endpoints
+     *  - 3 services 3
+     *  - 1 failure (endpoint no redondant)
+     * @param args
+     * @throws InterruptedException
+     * @throws FileNotFoundException
+     */
     public static void main(String[] args) throws InterruptedException, FileNotFoundException {
         DistribuedSystem ds= DistribuedSystem.buildSystem(1,12,3,false,1);
-        ds.toDotFile("runDs.dot");
-        FileOutputStream fout= new FileOutputStream("runDs.txt");
+        ds.toDotFile(DOT_FILENAME);
+        FileOutputStream fout= new FileOutputStream(LOG_FILENAME);
 
         RunSystem r1= new RunSystem(ds, fout);
         RunSystem r2= new RunSystem(ds, fout);
@@ -193,7 +238,5 @@ public class DistribuedSystem {
         Thread.sleep(5000);
         r1.isRunning=false;
         r2.isRunning=false;
-
     }
-
 }

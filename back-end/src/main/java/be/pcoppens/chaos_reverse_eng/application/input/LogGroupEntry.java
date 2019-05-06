@@ -14,6 +14,10 @@ import java.util.stream.Collectors;
 
 import static be.pcoppens.chaos_reverse_eng.application.model.EsbService.mapToService;
 
+/**
+ * A LogGroupEntry is a group of childs that share the same semantic.
+ * String format: group_name,child1,...,childn
+ */
 public class LogGroupEntry {
     private String name;
     private List<String> childs;
@@ -61,6 +65,15 @@ public class LogGroupEntry {
                 ", childs=[" + childs +"]"+
                 '}';
     }
+
+    /**
+     * Read an InputStream and buils a ServiceGroup.
+     * @param input a readable InputStream.
+     * @param name
+     * @param isGroup
+     * @return
+     * @throws IOException
+     */
     public static ServiceGroup readGroup(InputStream input, String name, boolean isGroup) throws IOException {
 
         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {

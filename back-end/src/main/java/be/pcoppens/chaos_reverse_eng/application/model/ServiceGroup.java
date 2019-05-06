@@ -5,6 +5,10 @@ import java.util.Collections;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Represent a group of service with a name.
+ * Have a Collection<EsbService> xor Collection<ServiceGroup>.
+ */
 public class ServiceGroup {
     private String name;
     private Collection<EsbService> esbServices;

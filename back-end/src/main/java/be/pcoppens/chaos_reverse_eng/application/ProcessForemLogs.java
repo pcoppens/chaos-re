@@ -17,10 +17,18 @@ import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 
+/**
+ * Main class.
+ * Build a representation of a system from Forem ESB log.
+ * Process:
+ *  1. Read the "forem.txt.csv" file
+ *  2. Use the SystemDiscoverTool to build a abstraction of the system.
+ *  3. Write a json Vizceral file ("../vizceral/dist/sample_data.json") that represent the discovered system.
+ */
 public class ProcessForemLogs {
     private static String fileName = "forem.txt.csv";
     private static String fileNameGroup = "foremApp.txt";
-    private static String vizceralOutput = "../vizceral/dist/sample_data.json";
+    private static String vizceralOutput = "vizceral/dist/sample_data.json";
     private static ServiceGroup group;
     private static ServiceGroup services;
     private static Set<EndPointEntry> fragiles;
@@ -60,7 +68,7 @@ public class ProcessForemLogs {
     }
 
 
-    public static void process() throws IOException{
+    private static void process() throws IOException{
         readData();
         discover();
       //  sysOut();
@@ -69,10 +77,7 @@ public class ProcessForemLogs {
 
     public static void main(String args[])throws IOException {
         process();
-
-
       //  String appStr= lr.esbClient.stream().map(entry->entry.getClient()).collect(Collectors.toSet()).stream().collect( Collectors.joining( "\n" ) );
       //  Files.write(Paths.get("C:/Users/cppptr/Source/vizceral-example/src/app.txt"), appStr.getBytes());
     }
-
 }

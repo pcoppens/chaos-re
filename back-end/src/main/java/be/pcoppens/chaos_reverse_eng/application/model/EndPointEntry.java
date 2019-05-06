@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
+ * An EndPointEntry has a verb, host and path.
  * immutable.
  */
 public class EndPointEntry {

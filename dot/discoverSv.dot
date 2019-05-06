@@ -1,0 +1,17 @@
+digraph System{
+	 endpoint0[label="GET SERVERwith /South/wills/such/their [1]"] ;
+	 endpoint1[label="GET SERVERgifts /what/should/system/talent [1]"] ;
+	 endpoint2[label="DELETE SERVERimproving /himself [1]"] ;
+	 endpoint3[label="GET SERVERinstinct /faculties/devote/however/possibly [1]"] ;
+	 endpoint4[label="GET SERVERword /system/duty/word/however [1]"] ;
+	 endpoint5[label="POST SERVERuniversal /useful/implanted/indulge [1]"] ;
+	 endpoint6[label="GET SERVERimproving /indulgence/what/respects/species [1]"] ;
+	 endpoint7[label="POST SERVERasks /comfortable/might/inclination/enlarging [1]"] ;
+	 endpoint8[label="PUT SERVERalso /should/maxim/some/prefers/then [1]"] ;
+Service_1[shape=square];
+ Service_1->endpoint5; endpoint5 -> endpoint3;
+Service_2[shape=square];
+ Service_2->endpoint4; endpoint4 -> endpoint2 -> endpoint0 -> endpoint1;
+Service_3[shape=square];
+ Service_3->endpoint7; endpoint7 -> endpoint6 -> endpoint8;
+}

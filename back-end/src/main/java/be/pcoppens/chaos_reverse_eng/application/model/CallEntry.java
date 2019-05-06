@@ -2,6 +2,9 @@ package be.pcoppens.chaos_reverse_eng.application.model;
 
 import java.util.Objects;
 
+/**
+ * Represent a Call entry {source -> target}
+ */
 public class CallEntry {
     private EndPointEntry source;
     private EndPointEntry target;
