@@ -15,12 +15,7 @@
         chaos-retro-ing.
     </description>
 
-	<licenses>
-        <license>
-            <name>MIT license (also X11)</name>
-            <url>http://www.spdx.org/licenses/MIT</url>
-        </license>
-    </licenses>
+	
     <developers>
         <developer>
             <id>pcoppens</id>
